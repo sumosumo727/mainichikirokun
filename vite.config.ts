@@ -7,4 +7,9 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['lucide-react', '@capacitor-community/health'],
   },
+  build: {
+    rollupOptions: {
+      external: ['@capacitor-community/health']
+    }
+  }
 });
