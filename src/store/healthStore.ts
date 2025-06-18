@@ -79,7 +79,7 @@ export const useHealthStore = create<HealthState>()(
           if (typeof window !== 'undefined' && (window as any).Capacitor) {
             try {
               // 動的インポートを使用してCapacitorプラグインを読み込み
-              const healthModule = await import('@capacitor-community/health').catch(() => null);
+              const healthModule = await import(/* @vite-ignore */ '@capacitor-community/health').catch(() => null);
               
               if (!healthModule) {
                 console.warn('HealthKit plugin not available');
