@@ -285,7 +285,7 @@ export const rejectUser = async (userId: string) => {
     .update({
       status: 'rejected',
     })
-    .eq('userId, userId)
+    .eq('id', userId)
     .select()
     .single();
   
