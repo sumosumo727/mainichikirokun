@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import type { Book, DailyRecord, MonthlyStats, Chapter } from '../types';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval } from 'date-fns';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, subMonths } from 'date-fns';
 import { 
   getBooks, 
   createBook, 
@@ -22,6 +22,7 @@ interface AppState {
   selectedDate: Date | null;
   showDailyModal: boolean;
   monthlyStats: MonthlyStats | null;
+  chartData: Array<{ month: string; running: number; strength: number; study: number; }>;
   isLoading: boolean;
   
   // 章選択の永続化用
@@ -42,6 +43,7 @@ interface AppState {
   setShowDailyModal: (show: boolean) => void;
   
   calculateMonthlyStats: (month: Date) => void;
+  calculateChartData: () => void;
   
   // 新機能: 章の完了状態を更新
   updateChapterCompletion: (bookId: string, chapterId: string, isCompleted: boolean, completedDate?: string) => void;
@@ -110,6 +112,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
   selectedDate: null,
   showDailyModal: false,
   monthlyStats: null,
+  chartData: [],
   isLoading: false,
   persistentChapterSelections: new Map(),
 
@@ -337,6 +340,10 @@ export const useAppStore = create<AppState>()((set, get) => ({
           return { dailyRecords: [...state.dailyRecords, newRecord], isLoading: false };
         }
       });
+
+      // 統計データを再計算
+      get().calculateChartData();
+      get().calculateMonthlyStats(new Date());
     } catch (error) {
       console.error('日次記録追加エラー:', error);
       set({ isLoading: false });
@@ -558,6 +565,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
 
     const runningDays = monthRecords.filter((r) => r.training.running).length;
     const strengthDays = monthRecords.filter((r) => r.training.strength).length;
+    const studyDays = monthRecords.filter((r) => r.studyProgress.length > 0).length;
     const totalTrainingDays = monthRecords.filter((r) => r.training.running || r.training.strength).length;
     const trainingRate = (totalTrainingDays / daysInMonth.length) * 100;
 
@@ -573,6 +581,37 @@ export const useAppStore = create<AppState>()((set, get) => ({
     };
 
     set({ monthlyStats: stats });
+  },
+
+  calculateChartData: () => {
+    const { dailyRecords } = get();
+    const now = new Date();
+    const chartData = [];
+
+    // 過去6ヶ月のデータを計算
+    for (let i = 5; i >= 0; i--) {
+      const targetMonth = subMonths(now, i);
+      const monthStart = startOfMonth(targetMonth);
+      const monthEnd = endOfMonth(targetMonth);
+      
+      const monthRecords = dailyRecords.filter((record) => {
+        const recordDate = new Date(record.date);
+        return recordDate >= monthStart && recordDate <= monthEnd;
+      });
+
+      const runningDays = monthRecords.filter((r) => r.training.running).length;
+      const strengthDays = monthRecords.filter((r) => r.training.strength).length;
+      const studyDays = monthRecords.filter((r) => r.studyProgress.length > 0).length;
+
+      chartData.push({
+        month: format(targetMonth, 'yyyy/MM'),
+        running: runningDays,
+        strength: strengthDays,
+        study: studyDays,
+      });
+    }
+
+    set({ chartData });
   },
 
   loadInitialData: async (userId: string) => {
@@ -606,6 +645,10 @@ export const useAppStore = create<AppState>()((set, get) => ({
 
       // 初期データ読み込み後に全体的なクリーンアップを実行（削除された章IDは指定しない）
       get().cleanupInvalidChapterReferences();
+
+      // 統計データを計算
+      get().calculateChartData();
+      get().calculateMonthlyStats(new Date());
     } catch (error) {
       console.error('初期データ読み込みエラー:', error);
       set({ isLoading: false });

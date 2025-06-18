@@ -11,25 +11,23 @@ import { PersonStanding, Dumbbell, BookOpen, TrendingUp } from 'lucide-react';
 
 export const DashboardPage: React.FC = () => {
   const [currentView, setCurrentView] = useState<'calendar' | 'books' | 'stats'>('calendar');
-  const { loadInitialData, dailyRecords, books, calculateMonthlyStats, monthlyStats, isLoading } = useAppStore();
+  const { 
+    loadInitialData, 
+    dailyRecords, 
+    books, 
+    calculateMonthlyStats, 
+    calculateChartData,
+    monthlyStats, 
+    chartData,
+    isLoading 
+  } = useAppStore();
   const { user } = useAuthStore();
 
   useEffect(() => {
     if (user) {
       loadInitialData(user.id);
-      calculateMonthlyStats(new Date());
     }
-  }, [user, loadInitialData, calculateMonthlyStats]);
-
-  // Mock data for charts
-  const chartData = [
-    { month: 'Jan', running: 12, strength: 8, study: 15 },
-    { month: 'Feb', running: 15, strength: 10, study: 18 },
-    { month: 'Mar', running: 18, strength: 12, study: 20 },
-    { month: 'Apr', running: 14, strength: 9, study: 16 },
-    { month: 'May', running: 20, strength: 15, study: 22 },
-    { month: 'Jun', running: 16, strength: 11, study: 19 },
-  ];
+  }, [user, loadInitialData]);
 
   const renderContent = () => {
     if (isLoading && currentView !== 'stats') {
@@ -58,31 +56,28 @@ export const DashboardPage: React.FC = () => {
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <StatsCard
-                title="Running Days"
+                title="ランニング日数"
                 value={monthlyStats?.trainingBreakdown.runningDays || 0}
                 icon={<PersonStanding className="h-5 w-5" />}
                 color="blue"
-                trend={{ value: 12, isPositive: true }}
               />
               <StatsCard
-                title="Strength Days"
+                title="筋力トレーニング日数"
                 value={monthlyStats?.trainingBreakdown.strengthDays || 0}
                 icon={<Dumbbell className="h-5 w-5" />}
                 color="green"
-                trend={{ value: 8, isPositive: true }}
               />
               <StatsCard
-                title="Books in Progress"
-                value={books.filter(b => b.chapters.some(c => !c.isCompleted)).length}
+                title="進行中の書籍"
+                value={books.filter(b => b.chapters.some(c => !c.isCompleted) && b.chapters.some(c => c.isCompleted)).length}
                 icon={<BookOpen className="h-5 w-5" />}
                 color="amber"
               />
               <StatsCard
-                title="Training Rate"
+                title="トレーニング実施率"
                 value={`${Math.round(monthlyStats?.trainingRate || 0)}%`}
                 icon={<TrendingUp className="h-5 w-5" />}
                 color="blue"
-                trend={{ value: 5, isPositive: true }}
               />
             </div>
             <MonthlyChart data={chartData} />
