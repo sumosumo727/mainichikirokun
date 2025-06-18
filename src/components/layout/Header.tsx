@@ -32,7 +32,7 @@ export const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => 
                 }`}
               >
                 <Calendar className="h-4 w-4" />
-                Calendar
+                カレンダー
               </button>
               <button
                 onClick={() => onViewChange('books')}
@@ -43,7 +43,7 @@ export const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => 
                 }`}
               >
                 <BookOpen className="h-4 w-4" />
-                Books
+                書籍
               </button>
               <button
                 onClick={() => onViewChange('stats')}
@@ -54,7 +54,7 @@ export const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => 
                 }`}
               >
                 <BarChart3 className="h-4 w-4" />
-                Statistics
+                統計
               </button>
             </nav>
           </div>
@@ -65,7 +65,7 @@ export const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => 
               <span className="text-sm font-medium text-gray-700">{user?.username}</span>
               {user?.isAdmin && (
                 <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">
-                  Admin
+                  管理者
                 </span>
               )}
             </div>
@@ -74,7 +74,7 @@ export const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => 
               className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors"
             >
               <LogOut className="h-4 w-4" />
-              Logout
+              ログアウト
             </button>
           </div>
         </div>
@@ -92,7 +92,7 @@ export const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => 
             }`}
           >
             <Calendar className="h-4 w-4" />
-            Calendar
+            カレンダー
           </button>
           <button
             onClick={() => onViewChange('books')}
@@ -103,7 +103,7 @@ export const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => 
             }`}
           >
             <BookOpen className="h-4 w-4" />
-            Books
+            書籍
           </button>
           <button
             onClick={() => onViewChange('stats')}
@@ -114,7 +114,7 @@ export const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => 
             }`}
           >
             <BarChart3 className="h-4 w-4" />
-            Stats
+            統計
           </button>
         </div>
       </div>

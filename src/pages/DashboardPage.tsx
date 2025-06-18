@@ -8,6 +8,7 @@ import { MonthlyChart } from '../components/dashboard/MonthlyChart';
 import { useAppStore } from '../store/appStore';
 import { useAuthStore } from '../store/authStore';
 import { PersonStanding, Dumbbell, BookOpen, TrendingUp } from 'lucide-react';
+import { format, getDaysInMonth } from 'date-fns';
 
 export const DashboardPage: React.FC = () => {
   const [currentView, setCurrentView] = useState<'calendar' | 'books' | 'stats'>('calendar');
@@ -28,6 +29,10 @@ export const DashboardPage: React.FC = () => {
       loadInitialData(user.id);
     }
   }, [user, loadInitialData]);
+
+  // 今月の日数を計算
+  const currentDate = new Date();
+  const daysInCurrentMonth = getDaysInMonth(currentDate);
 
   const renderContent = () => {
     if (isLoading && currentView !== 'stats') {
@@ -76,6 +81,7 @@ export const DashboardPage: React.FC = () => {
               <StatsCard
                 title="トレーニング実施率"
                 value={`${Math.round(monthlyStats?.trainingRate || 0)}%`}
+                subtitle={`${monthlyStats?.trainingBreakdown.totalTrainingDays || 0}日 / ${daysInCurrentMonth}日`}
                 icon={<TrendingUp className="h-5 w-5" />}
                 color="blue"
               />

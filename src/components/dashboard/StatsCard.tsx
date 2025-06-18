@@ -11,6 +11,7 @@ interface StatsCardProps {
     value: number;
     isPositive: boolean;
   };
+  subtitle?: string;
 }
 
 export const StatsCard: React.FC<StatsCardProps> = ({
@@ -19,6 +20,7 @@ export const StatsCard: React.FC<StatsCardProps> = ({
   icon,
   color,
   trend,
+  subtitle,
 }) => {
   const colors = {
     blue: 'bg-blue-50 text-blue-700',
@@ -33,6 +35,9 @@ export const StatsCard: React.FC<StatsCardProps> = ({
         <div>
           <p className="text-sm font-medium text-gray-600">{title}</p>
           <p className="text-2xl font-bold text-gray-900 mt-1">{value}</p>
+          {subtitle && (
+            <p className="text-xs text-gray-500 mt-1">{subtitle}</p>
+          )}
           {trend && (
             <div className="flex items-center mt-2">
               <span className={cn(
@@ -41,7 +46,7 @@ export const StatsCard: React.FC<StatsCardProps> = ({
               )}>
                 {trend.isPositive ? '+' : ''}{trend.value}%
               </span>
-              <span className="text-sm text-gray-500 ml-1">vs last month</span>
+              <span className="text-sm text-gray-500 ml-1">前月比</span>
             </div>
           )}
         </div>
