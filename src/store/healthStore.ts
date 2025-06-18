@@ -76,52 +76,66 @@ export const useHealthStore = create<HealthState>()(
         set({ isLoading: true });
         try {
           // HealthKit同期の実装（将来のCapacitor対応時）
-          if (typeof window !== 'undefined' && window.Capacitor) {
-            const { Health } = await import('@capacitor-community/health');
-            
-            // 過去30日間のデータを取得
-            const endDate = new Date();
-            const startDate = new Date();
-            startDate.setDate(endDate.getDate() - 30);
-
-            const weightResult = await Health.queryHKitSampleType({
-              sampleName: 'weight',
-              startDate: startDate.toISOString(),
-              endDate: endDate.toISOString(),
-              limit: 30
-            });
-
-            const bodyFatResult = await Health.queryHKitSampleType({
-              sampleName: 'body_fat_percentage',
-              startDate: startDate.toISOString(),
-              endDate: endDate.toISOString(),
-              limit: 30
-            });
-
-            // データをマージして保存
-            const mergedData = weightResult.resultData.map((weightItem: any) => {
-              const date = weightItem.startDate.split('T')[0];
-              const bodyFatItem = bodyFatResult.resultData.find((bf: any) => 
-                bf.startDate.split('T')[0] === date
-              );
-
-              return {
-                userId: '', // 実際のユーザーIDを設定
-                date,
-                weight: parseFloat(weightItem.value),
-                bodyFatPercentage: bodyFatItem ? parseFloat(bodyFatItem.value) * 100 : undefined,
-              };
-            });
-
-            // 既存データと重複しないように追加
-            const { healthData } = get();
-            const existingDates = new Set(healthData.map(item => item.date));
-            
-            mergedData.forEach(data => {
-              if (!existingDates.has(data.date)) {
-                get().addHealthData(data);
+          if (typeof window !== 'undefined' && (window as any).Capacitor) {
+            try {
+              // 動的インポートを使用してCapacitorプラグインを読み込み
+              const healthModule = await import('@capacitor-community/health').catch(() => null);
+              
+              if (!healthModule) {
+                console.warn('HealthKit plugin not available');
+                return;
               }
-            });
+
+              const { Health } = healthModule;
+              
+              // 過去30日間のデータを取得
+              const endDate = new Date();
+              const startDate = new Date();
+              startDate.setDate(endDate.getDate() - 30);
+
+              const weightResult = await Health.queryHKitSampleType({
+                sampleName: 'weight',
+                startDate: startDate.toISOString(),
+                endDate: endDate.toISOString(),
+                limit: 30
+              });
+
+              const bodyFatResult = await Health.queryHKitSampleType({
+                sampleName: 'body_fat_percentage',
+                startDate: startDate.toISOString(),
+                endDate: endDate.toISOString(),
+                limit: 30
+              });
+
+              // データをマージして保存
+              const mergedData = weightResult.resultData.map((weightItem: any) => {
+                const date = weightItem.startDate.split('T')[0];
+                const bodyFatItem = bodyFatResult.resultData.find((bf: any) => 
+                  bf.startDate.split('T')[0] === date
+                );
+
+                return {
+                  userId: '', // 実際のユーザーIDを設定
+                  date,
+                  weight: parseFloat(weightItem.value),
+                  bodyFatPercentage: bodyFatItem ? parseFloat(bodyFatItem.value) * 100 : undefined,
+                };
+              });
+
+              // 既存データと重複しないように追加
+              const { healthData } = get();
+              const existingDates = new Set(healthData.map(item => item.date));
+              
+              mergedData.forEach(data => {
+                if (!existingDates.has(data.date)) {
+                  get().addHealthData(data);
+                }
+              });
+            } catch (importError) {
+              console.warn('Failed to import HealthKit plugin:', importError);
+            }
+          } else {
+            console.log('HealthKit is only available in native Capacitor apps');
           }
         } catch (error) {
           console.error('HealthKit sync error:', error);
@@ -132,8 +146,9 @@ export const useHealthStore = create<HealthState>()(
 
       isHealthKitAvailable: () => {
         return typeof window !== 'undefined' && 
-               window.Capacitor !== undefined &&
-               window.Capacitor.isNativePlatform();
+               (window as any).Capacitor !== undefined &&
+               (window as any).Capacitor.isNativePlatform &&
+               (window as any).Capacitor.isNativePlatform();
       },
     }),
     {
