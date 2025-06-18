@@ -16,10 +16,9 @@ export const DashboardPage: React.FC = () => {
     loadInitialData, 
     dailyRecords, 
     books, 
-    calculateMonthlyStats, 
-    calculateChartData,
     monthlyStats, 
     chartData,
+    trainingDistribution,
     isLoading 
   } = useAppStore();
   const { user } = useAuthStore();
@@ -86,7 +85,7 @@ export const DashboardPage: React.FC = () => {
                 color="blue"
               />
             </div>
-            <MonthlyChart data={chartData} />
+            <MonthlyChart data={chartData} trainingDistribution={trainingDistribution} />
           </div>
         );
       default:

@@ -9,11 +9,15 @@ interface MonthlyChartProps {
     strength: number;
     study: number;
   }[];
+  trainingDistribution: {
+    running: number;
+    strength: number;
+  };
 }
 
-const COLORS = ['#3b82f6', '#10b981', '#f59e0b'];
+const COLORS = ['#3b82f6', '#10b981'];
 
-export const MonthlyChart: React.FC<MonthlyChartProps> = ({ data }) => {
+export const MonthlyChart: React.FC<MonthlyChartProps> = ({ data, trainingDistribution }) => {
   if (!data || data.length === 0) {
     return (
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -24,7 +28,7 @@ export const MonthlyChart: React.FC<MonthlyChartProps> = ({ data }) => {
           </div>
         </Card>
         <Card>
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">今月の分布</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">トレーニング比率</h3>
           <div className="h-64 flex items-center justify-center text-gray-500">
             <p>データがありません</p>
           </div>
@@ -33,12 +37,11 @@ export const MonthlyChart: React.FC<MonthlyChartProps> = ({ data }) => {
     );
   }
 
-  const currentMonth = data[data.length - 1];
+  // トレーニング比率のデータを準備
   const pieData = [
-    { name: 'ランニング', value: currentMonth?.running || 0 },
-    { name: '筋力トレーニング', value: currentMonth?.strength || 0 },
-    { name: '学習', value: currentMonth?.study || 0 },
-  ].filter(item => item.value > 0); // 値が0のものは除外
+    { name: 'ランニング', value: trainingDistribution.running },
+    { name: '筋力トレーニング', value: trainingDistribution.strength },
+  ].filter(item => item.value > 0);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -67,7 +70,7 @@ export const MonthlyChart: React.FC<MonthlyChartProps> = ({ data }) => {
       </Card>
 
       <Card>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">今月の分布</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">今月のトレーニング比率</h3>
         <div className="h-64">
           {pieData.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
@@ -77,7 +80,7 @@ export const MonthlyChart: React.FC<MonthlyChartProps> = ({ data }) => {
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  label={({ name, value }) => `${name} ${value}%`}
                   outerRadius={80}
                   fill="#8884d8"
                   dataKey="value"
@@ -86,15 +89,37 @@ export const MonthlyChart: React.FC<MonthlyChartProps> = ({ data }) => {
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip formatter={(value) => [`${value}日`, '']} />
+                <Tooltip formatter={(value) => [`${value}%`, '']} />
               </PieChart>
             </ResponsiveContainer>
           ) : (
             <div className="flex items-center justify-center h-full text-gray-500">
-              <p>今月のデータがありません</p>
+              <p>今月のトレーニングデータがありません</p>
             </div>
           )}
         </div>
+        
+        {/* 詳細な比率表示 */}
+        {pieData.length > 0 && (
+          <div className="mt-4 pt-4 border-t border-gray-200">
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 bg-blue-600 rounded-full"></div>
+                  <span>ランニング</span>
+                </div>
+                <span className="font-medium">{trainingDistribution.running}%</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 bg-green-600 rounded-full"></div>
+                  <span>筋力トレーニング</span>
+                </div>
+                <span className="font-medium">{trainingDistribution.strength}%</span>
+              </div>
+            </div>
+          </div>
+        )}
       </Card>
     </div>
   );

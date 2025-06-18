@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import type { Book, DailyRecord, MonthlyStats, Chapter } from '../types';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, subMonths } from 'date-fns';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, subMonths, getDaysInMonth } from 'date-fns';
 import { 
   getBooks, 
   createBook, 
@@ -23,6 +23,7 @@ interface AppState {
   showDailyModal: boolean;
   monthlyStats: MonthlyStats | null;
   chartData: Array<{ month: string; running: number; strength: number; study: number; }>;
+  trainingDistribution: { running: number; strength: number; };
   isLoading: boolean;
   
   // 章選択の永続化用
@@ -44,6 +45,7 @@ interface AppState {
   
   calculateMonthlyStats: (month: Date) => void;
   calculateChartData: () => void;
+  calculateTrainingDistribution: () => void;
   
   // 新機能: 章の完了状態を更新
   updateChapterCompletion: (bookId: string, chapterId: string, isCompleted: boolean, completedDate?: string) => void;
@@ -113,6 +115,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
   showDailyModal: false,
   monthlyStats: null,
   chartData: [],
+  trainingDistribution: { running: 0, strength: 0 },
   isLoading: false,
   persistentChapterSelections: new Map(),
 
@@ -344,6 +347,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
       // 統計データを再計算
       get().calculateChartData();
       get().calculateMonthlyStats(new Date());
+      get().calculateTrainingDistribution();
     } catch (error) {
       console.error('日次記録追加エラー:', error);
       set({ isLoading: false });
@@ -556,7 +560,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
     const { dailyRecords } = get();
     const monthStart = startOfMonth(month);
     const monthEnd = endOfMonth(month);
-    const daysInMonth = eachDayOfInterval({ start: monthStart, end: monthEnd });
+    const daysInMonth = getDaysInMonth(month);
     
     const monthRecords = dailyRecords.filter((record) => {
       const recordDate = new Date(record.date);
@@ -567,7 +571,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
     const strengthDays = monthRecords.filter((r) => r.training.strength).length;
     const studyDays = monthRecords.filter((r) => r.studyProgress.length > 0).length;
     const totalTrainingDays = monthRecords.filter((r) => r.training.running || r.training.strength).length;
-    const trainingRate = (totalTrainingDays / daysInMonth.length) * 100;
+    const trainingRate = (totalTrainingDays / daysInMonth) * 100;
 
     const stats: MonthlyStats = {
       month: format(month, 'yyyy-MM'),
@@ -614,6 +618,37 @@ export const useAppStore = create<AppState>()((set, get) => ({
     set({ chartData });
   },
 
+  calculateTrainingDistribution: () => {
+    const { dailyRecords } = get();
+    const now = new Date();
+    const monthStart = startOfMonth(now);
+    const monthEnd = endOfMonth(now);
+    
+    const monthRecords = dailyRecords.filter((record) => {
+      const recordDate = new Date(record.date);
+      return recordDate >= monthStart && recordDate <= monthEnd;
+    });
+
+    const runningDays = monthRecords.filter((r) => r.training.running).length;
+    const strengthDays = monthRecords.filter((r) => r.training.strength).length;
+    const totalTrainingDays = runningDays + strengthDays;
+
+    if (totalTrainingDays === 0) {
+      set({ trainingDistribution: { running: 0, strength: 0 } });
+      return;
+    }
+
+    const runningPercentage = (runningDays / totalTrainingDays) * 100;
+    const strengthPercentage = (strengthDays / totalTrainingDays) * 100;
+
+    set({ 
+      trainingDistribution: { 
+        running: Math.round(runningPercentage * 10) / 10, // 小数点1桁
+        strength: Math.round(strengthPercentage * 10) / 10 
+      } 
+    });
+  },
+
   loadInitialData: async (userId: string) => {
     set({ isLoading: true });
     try {
@@ -649,6 +684,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
       // 統計データを計算
       get().calculateChartData();
       get().calculateMonthlyStats(new Date());
+      get().calculateTrainingDistribution();
     } catch (error) {
       console.error('初期データ読み込みエラー:', error);
       set({ isLoading: false });

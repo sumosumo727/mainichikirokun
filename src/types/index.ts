@@ -86,3 +86,20 @@ export interface DailyInputModal {
     chapterIds: string[];
   }>;
 }
+
+// 健康データ関連の型定義
+export interface HealthData {
+  id: string;
+  userId: string;
+  date: string; // YYYY-MM-DD
+  weight?: number; // kg
+  bodyFatPercentage?: number; // %
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface HealthKitData {
+  weight: number;
+  bodyFatPercentage: number;
+  date: string;
+}
