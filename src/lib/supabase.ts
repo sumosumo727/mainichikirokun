@@ -4,8 +4,17 @@ import type { Database } from '../types/database';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
+// Check if environment variables are properly configured
 if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables');
+  throw new Error('Missing Supabase environment variables. Please check your .env file.');
+}
+
+// Check if placeholder values are still being used
+if (supabaseUrl === 'https://placeholder.supabase.co' || 
+    supabaseUrl === 'your_supabase_project_url' ||
+    supabaseAnonKey === 'placeholder_anon_key' ||
+    supabaseAnonKey === 'your_supabase_anon_key') {
+  throw new Error('Please replace the placeholder values in your .env file with your actual Supabase project URL and anon key. Click "Connect to Supabase" in the top right to set up your Supabase project.');
 }
 
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
@@ -276,7 +285,7 @@ export const rejectUser = async (userId: string) => {
     .update({
       status: 'rejected',
     })
-    .eq('id', userId)
+    .eq('userId, userId)
     .select()
     .single();
   
