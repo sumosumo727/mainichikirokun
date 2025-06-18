@@ -5,11 +5,6 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   optimizeDeps: {
-    exclude: ['lucide-react', '@capacitor-community/health'],
+    exclude: ['lucide-react'],
   },
-  build: {
-    rollupOptions: {
-      external: ['@capacitor-community/health']
-    }
-  }
 });

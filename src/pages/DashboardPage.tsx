@@ -5,16 +5,13 @@ import { DailyModal } from '../components/calendar/DailyModal';
 import { BookList } from '../components/books/BookList';
 import { StatsCard } from '../components/dashboard/StatsCard';
 import { MonthlyChart } from '../components/dashboard/MonthlyChart';
-import { HealthDataInput } from '../components/health/HealthDataInput';
-import { HealthDataChart } from '../components/health/HealthDataChart';
 import { useAppStore } from '../store/appStore';
 import { useAuthStore } from '../store/authStore';
-import { useHealthStore } from '../store/healthStore';
 import { PersonStanding, Dumbbell, BookOpen, TrendingUp } from 'lucide-react';
-import { format, getDaysInMonth, subDays } from 'date-fns';
+import { format, getDaysInMonth } from 'date-fns';
 
 export const DashboardPage: React.FC = () => {
-  const [currentView, setCurrentView] = useState<'calendar' | 'books' | 'stats' | 'health'>('calendar');
+  const [currentView, setCurrentView] = useState<'calendar' | 'books' | 'stats'>('calendar');
   const { 
     loadInitialData, 
     dailyRecords, 
@@ -25,7 +22,6 @@ export const DashboardPage: React.FC = () => {
     isLoading 
   } = useAppStore();
   const { user } = useAuthStore();
-  const { healthData, getHealthDataByDateRange } = useHealthStore();
 
   useEffect(() => {
     if (user) {
@@ -37,15 +33,8 @@ export const DashboardPage: React.FC = () => {
   const currentDate = new Date();
   const daysInCurrentMonth = getDaysInMonth(currentDate);
 
-  // 過去30日間の健康データを取得
-  const thirtyDaysAgo = subDays(new Date(), 30);
-  const recentHealthData = getHealthDataByDateRange(
-    format(thirtyDaysAgo, 'yyyy-MM-dd'),
-    format(new Date(), 'yyyy-MM-dd')
-  );
-
   const renderContent = () => {
-    if (isLoading && currentView !== 'stats' && currentView !== 'health') {
+    if (isLoading && currentView !== 'stats') {
       return (
         <div className="flex items-center justify-center py-12">
           <div className="text-center">
@@ -97,13 +86,6 @@ export const DashboardPage: React.FC = () => {
               />
             </div>
             <MonthlyChart data={chartData} trainingDistribution={trainingDistribution} />
-          </div>
-        );
-      case 'health':
-        return (
-          <div className="space-y-6">
-            <HealthDataInput />
-            <HealthDataChart data={recentHealthData} />
           </div>
         );
       default:
