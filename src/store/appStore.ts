@@ -176,16 +176,21 @@ export const useAppStore = create<AppState>()((set, get) => ({
         throw new Error('書籍が見つかりません');
       }
 
-      // 削除される章のIDを特定
+      // 削除される章のIDを正確に特定
       let deletedChapterIds: string[] = [];
       if (updates.chapters) {
-        const currentChapterIds = currentBook.chapters.map(ch => ch.id);
+        const currentChapterIds = new Set(currentBook.chapters.map(ch => ch.id));
         const newChapterNames = updates.chapters.map(ch => ch.name);
-        const currentChapterNames = currentBook.chapters.map(ch => ch.name);
         
-        // 名前が変更または削除された章を特定
+        // 新しい章リストに含まれていない既存の章を削除対象として特定
+        const remainingChapters = currentBook.chapters.filter(ch => 
+          newChapterNames.includes(ch.name)
+        );
+        const remainingChapterIds = new Set(remainingChapters.map(ch => ch.id));
+        
+        // 削除される章のIDを特定（既存の章で、新しいリストに含まれていないもの）
         deletedChapterIds = currentBook.chapters
-          .filter(ch => !newChapterNames.includes(ch.name))
+          .filter(ch => !remainingChapterIds.has(ch.id))
           .map(ch => ch.id);
       }
 
@@ -231,6 +236,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
 
         // 削除された章のみをクリーンアップ
         if (deletedChapterIds.length > 0) {
+          console.log('削除される章のID:', deletedChapterIds);
           get().cleanupInvalidChapterReferences(deletedChapterIds);
         }
       } else {
@@ -522,6 +528,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
       studyProgress: record.studyProgress.filter(progress => {
         // 削除された章は除外、それ以外の有効な章は保持
         if (deletedChapterIds && deletedChapterIdSet.has(progress.chapterId)) {
+          console.log(`日次記録から削除: ${progress.chapterName} (${progress.chapterId})`);
           return false;
         }
         return validBookIds.has(progress.bookId) && validChapterIds.has(progress.chapterId);
@@ -538,6 +545,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
           chapterIds: selection.chapterIds.filter(chapterId => {
             // 削除された章は除外、それ以外の有効な章は保持
             if (deletedChapterIds && deletedChapterIdSet.has(chapterId)) {
+              console.log(`永続化選択から削除: ${chapterId}`);
               return false;
             }
             return validChapterIds.has(chapterId);
