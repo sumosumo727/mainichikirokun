@@ -61,8 +61,8 @@ interface AppState {
   getPersistentChapterSelection: (date: string) => Array<{ bookId: string; chapterIds: string[] }>;
   clearPersistentChapterSelection: (date: string) => void;
   
-  // 無効な章参照をクリーンアップ（削除された章のIDを受け取る）
-  cleanupInvalidChapterReferences: (deletedChapterIds?: string[]) => void;
+  // 削除された章の名前に基づいてクリーンアップ
+  cleanupInvalidChapterReferencesByName: (bookId: string, deletedChapterNames: string[]) => void;
   
   // Data fetching
   loadInitialData: (userId: string) => Promise<void>;
@@ -176,22 +176,16 @@ export const useAppStore = create<AppState>()((set, get) => ({
         throw new Error('書籍が見つかりません');
       }
 
-      // 削除される章のIDを正確に特定
-      let deletedChapterIds: string[] = [];
+      // 削除される章の名前を特定
+      let deletedChapterNames: string[] = [];
       if (updates.chapters) {
-        const currentChapterIds = new Set(currentBook.chapters.map(ch => ch.id));
-        const newChapterNames = updates.chapters.map(ch => ch.name);
+        const newChapterNames = new Set(updates.chapters.map(ch => ch.name));
+        const currentChapterNames = currentBook.chapters.map(ch => ch.name);
         
-        // 新しい章リストに含まれていない既存の章を削除対象として特定
-        const remainingChapters = currentBook.chapters.filter(ch => 
-          newChapterNames.includes(ch.name)
-        );
-        const remainingChapterIds = new Set(remainingChapters.map(ch => ch.id));
+        // 新しい章リストに含まれていない既存の章の名前を削除対象として特定
+        deletedChapterNames = currentChapterNames.filter(name => !newChapterNames.has(name));
         
-        // 削除される章のIDを特定（既存の章で、新しいリストに含まれていないもの）
-        deletedChapterIds = currentBook.chapters
-          .filter(ch => !remainingChapterIds.has(ch.id))
-          .map(ch => ch.id);
+        console.log('削除される章の名前:', deletedChapterNames);
       }
 
       if (updates.name) {
@@ -234,10 +228,9 @@ export const useAppStore = create<AppState>()((set, get) => ({
           isLoading: false,
         }));
 
-        // 削除された章のみをクリーンアップ
-        if (deletedChapterIds.length > 0) {
-          console.log('削除される章のID:', deletedChapterIds);
-          get().cleanupInvalidChapterReferences(deletedChapterIds);
+        // 削除された章の名前に基づいてクリーンアップ
+        if (deletedChapterNames.length > 0) {
+          get().cleanupInvalidChapterReferencesByName(id, deletedChapterNames);
         }
       } else {
         // 章の更新がない場合は、書籍名のみ更新
@@ -258,10 +251,6 @@ export const useAppStore = create<AppState>()((set, get) => ({
   deleteBookData: async (id) => {
     set({ isLoading: true });
     try {
-      // 削除される書籍の章IDを取得
-      const bookToDelete = get().books.find(book => book.id === id);
-      const deletedChapterIds = bookToDelete ? bookToDelete.chapters.map(ch => ch.id) : [];
-
       const { error } = await deleteBook(id);
       if (error) throw error;
 
@@ -270,10 +259,8 @@ export const useAppStore = create<AppState>()((set, get) => ({
         isLoading: false,
       }));
 
-      // 削除された章のみをクリーンアップ
-      if (deletedChapterIds.length > 0) {
-        get().cleanupInvalidChapterReferences(deletedChapterIds);
-      }
+      // 書籍全体が削除された場合のクリーンアップ
+      get().cleanupInvalidChapterReferencesByName(id, []);
     } catch (error) {
       console.error('書籍削除エラー:', error);
       set({ isLoading: false });
@@ -506,52 +493,48 @@ export const useAppStore = create<AppState>()((set, get) => ({
     });
   },
 
-  cleanupInvalidChapterReferences: (deletedChapterIds) => {
+  cleanupInvalidChapterReferencesByName: (bookId, deletedChapterNames) => {
     const { books, dailyRecords, persistentChapterSelections } = get();
     
-    // 削除された章のIDセットを作成
-    const deletedChapterIdSet = new Set(deletedChapterIds || []);
+    console.log(`クリーンアップ開始: 書籍ID=${bookId}, 削除された章名=`, deletedChapterNames);
     
-    // 現在存在する章のIDセットを作成
-    const validChapterIds = new Set<string>();
-    const validBookIds = new Set<string>();
-    books.forEach(book => {
-      validBookIds.add(book.id);
-      book.chapters.forEach(chapter => {
-        validChapterIds.add(chapter.id);
-      });
-    });
+    // 削除された章の名前セットを作成
+    const deletedChapterNameSet = new Set(deletedChapterNames);
     
-    // 日次記録から削除された章の参照のみを削除
+    // 日次記録から削除された章の参照を削除
     const cleanedDailyRecords = dailyRecords.map(record => ({
       ...record,
       studyProgress: record.studyProgress.filter(progress => {
-        // 削除された章は除外、それ以外の有効な章は保持
-        if (deletedChapterIds && deletedChapterIdSet.has(progress.chapterId)) {
+        // 対象の書籍で、削除された章名の場合は除外
+        if (progress.bookId === bookId && deletedChapterNameSet.has(progress.chapterName)) {
           console.log(`日次記録から削除: ${progress.chapterName} (${progress.chapterId})`);
           return false;
         }
-        return validBookIds.has(progress.bookId) && validChapterIds.has(progress.chapterId);
+        return true;
       })
     }));
     
-    // 永続化された章選択から削除された章の参照のみを削除
+    // 永続化された章選択から削除された章の参照を削除
     const cleanedPersistentSelections = new Map<string, Array<{ bookId: string; chapterIds: string[] }>>();
     persistentChapterSelections.forEach((selections, date) => {
-      const validSelections = selections
-        .filter(selection => validBookIds.has(selection.bookId))
-        .map(selection => ({
-          bookId: selection.bookId,
-          chapterIds: selection.chapterIds.filter(chapterId => {
-            // 削除された章は除外、それ以外の有効な章は保持
-            if (deletedChapterIds && deletedChapterIdSet.has(chapterId)) {
-              console.log(`永続化選択から削除: ${chapterId}`);
-              return false;
-            }
-            return validChapterIds.has(chapterId);
-          })
-        }))
-        .filter(selection => selection.chapterIds.length > 0);
+      const validSelections = selections.map(selection => {
+        if (selection.bookId === bookId) {
+          // 対象の書籍の場合、削除された章名に対応するIDを除外
+          const book = books.find(b => b.id === bookId);
+          if (book) {
+            const validChapterIds = selection.chapterIds.filter(chapterId => {
+              const chapter = book.chapters.find(ch => ch.id === chapterId);
+              if (chapter && deletedChapterNameSet.has(chapter.name)) {
+                console.log(`永続化選択から削除: ${chapter.name} (${chapterId})`);
+                return false;
+              }
+              return true;
+            });
+            return { ...selection, chapterIds: validChapterIds };
+          }
+        }
+        return selection;
+      }).filter(selection => selection.chapterIds.length > 0);
       
       if (validSelections.length > 0) {
         cleanedPersistentSelections.set(date, validSelections);
@@ -562,6 +545,8 @@ export const useAppStore = create<AppState>()((set, get) => ({
       dailyRecords: cleanedDailyRecords,
       persistentChapterSelections: cleanedPersistentSelections
     });
+    
+    console.log('クリーンアップ完了');
   },
 
   calculateMonthlyStats: (month) => {
@@ -685,9 +670,6 @@ export const useAppStore = create<AppState>()((set, get) => ({
           get().updateChapterCompletion(progress.bookId, progress.chapterId, true, record.date);
         });
       });
-
-      // 初期データ読み込み後に全体的なクリーンアップを実行（削除された章IDは指定しない）
-      get().cleanupInvalidChapterReferences();
 
       // 統計データを計算
       get().calculateChartData();
