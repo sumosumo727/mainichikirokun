@@ -161,6 +161,36 @@ export const deleteChapters = async (bookId: string) => {
   return { error };
 };
 
+// 特定の章を削除する関数（新規追加）
+export const deleteChapter = async (chapterId: string) => {
+  const { error } = await supabase
+    .from('chapters')
+    .delete()
+    .eq('id', chapterId);
+  
+  return { error };
+};
+
+// 複数の章を削除する関数（新規追加）
+export const deleteMultipleChapters = async (chapterIds: string[]) => {
+  const { error } = await supabase
+    .from('chapters')
+    .delete()
+    .in('id', chapterIds);
+  
+  return { error };
+};
+
+// study_progressから特定の章のレコードを削除する関数（新規追加）
+export const deleteStudyProgressByChapterIds = async (chapterIds: string[]) => {
+  const { error } = await supabase
+    .from('study_progress')
+    .delete()
+    .in('chapter_id', chapterIds);
+  
+  return { error };
+};
+
 // Daily Records関連
 export const getDailyRecords = async (userId: string) => {
   const { data, error } = await supabase
