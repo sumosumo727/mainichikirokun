@@ -5,9 +5,10 @@ import { DailyModal } from '../components/calendar/DailyModal';
 import { BookList } from '../components/books/BookList';
 import { StatsCard } from '../components/dashboard/StatsCard';
 import { MonthlyChart } from '../components/dashboard/MonthlyChart';
+import { BodyMetricsChart } from '../components/dashboard/BodyMetricsChart';
 import { useAppStore } from '../store/appStore';
 import { useAuthStore } from '../store/authStore';
-import { PersonStanding, Dumbbell, BookOpen, TrendingUp } from 'lucide-react';
+import { PersonStanding, Dumbbell, BookOpen, TrendingUp, Scale } from 'lucide-react';
 import { format, getDaysInMonth } from 'date-fns';
 
 export const DashboardPage: React.FC = () => {
@@ -16,9 +17,13 @@ export const DashboardPage: React.FC = () => {
     loadInitialData, 
     dailyRecords, 
     books, 
+    healthData,
     monthlyStats, 
     chartData,
     trainingDistribution,
+    bodyMetricsChartData,
+    bodyMetricsPeriod,
+    setBodyMetricsPeriod,
     isLoading 
   } = useAppStore();
   const { user } = useAuthStore();
@@ -32,6 +37,11 @@ export const DashboardPage: React.FC = () => {
   // 今月の日数を計算
   const currentDate = new Date();
   const daysInCurrentMonth = getDaysInMonth(currentDate);
+
+  // 体重・体脂肪率の最新データを取得
+  const latestHealthData = healthData.length > 0 
+    ? healthData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0]
+    : null;
 
   const renderContent = () => {
     if (isLoading && currentView !== 'stats') {
@@ -58,7 +68,7 @@ export const DashboardPage: React.FC = () => {
       case 'stats':
         return (
           <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
               <StatsCard
                 title="ランニング日数"
                 value={monthlyStats?.trainingBreakdown.runningDays || 0}
@@ -84,7 +94,21 @@ export const DashboardPage: React.FC = () => {
                 icon={<TrendingUp className="h-5 w-5" />}
                 color="blue"
               />
+              <StatsCard
+                title="最新体重"
+                value={latestHealthData?.weight ? `${latestHealthData.weight}kg` : '-'}
+                subtitle={latestHealthData?.bodyFatPercentage ? `体脂肪率: ${latestHealthData.bodyFatPercentage}%` : ''}
+                icon={<Scale className="h-5 w-5" />}
+                color="red"
+              />
             </div>
+            
+            <BodyMetricsChart 
+              data={bodyMetricsChartData}
+              period={bodyMetricsPeriod}
+              onPeriodChange={setBodyMetricsPeriod}
+            />
+            
             <MonthlyChart data={chartData} trainingDistribution={trainingDistribution} />
           </div>
         );

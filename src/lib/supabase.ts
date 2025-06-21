@@ -284,6 +284,46 @@ export const deleteStudyProgress = async (dailyRecordId: string) => {
   return { error };
 };
 
+// Health Data関連（体重・体脂肪率）
+export const getHealthData = async (userId: string) => {
+  const { data, error } = await supabase
+    .from('health_data')
+    .select('*')
+    .eq('user_id', userId)
+    .order('record_date', { ascending: false });
+  
+  return { data, error };
+};
+
+export const upsertHealthData = async (userId: string, healthData: {
+  record_date: string;
+  weight?: number;
+  body_fat_percentage?: number;
+}) => {
+  const { data, error } = await supabase
+    .from('health_data')
+    .upsert({
+      user_id: userId,
+      ...healthData,
+    }, {
+      onConflict: 'user_id,record_date'
+    })
+    .select()
+    .single();
+  
+  return { data, error };
+};
+
+export const deleteHealthData = async (userId: string, date: string) => {
+  const { error } = await supabase
+    .from('health_data')
+    .delete()
+    .eq('user_id', userId)
+    .eq('record_date', date);
+  
+  return { error };
+};
+
 // 管理者機能
 export const getPendingUsers = async () => {
   const { data, error } = await supabase

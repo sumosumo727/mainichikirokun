@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { format } from 'date-fns';
-import { PersonStanding, Dumbbell, BookOpen, Save, CheckCircle } from 'lucide-react';
+import { PersonStanding, Dumbbell, BookOpen, Save, CheckCircle, Scale } from 'lucide-react';
 import { Modal } from '../ui/Modal';
 import { Button } from '../ui/Button';
+import { Input } from '../ui/Input';
 import { useAppStore } from '../../store/appStore';
 import { useAuthStore } from '../../store/authStore';
 import type { DailyRecord } from '../../types';
@@ -13,9 +14,12 @@ export const DailyModal: React.FC = () => {
     showDailyModal, 
     setShowDailyModal, 
     dailyRecords, 
+    healthData,
     books, 
     addDailyRecord, 
     updateDailyRecord,
+    addHealthData,
+    updateHealthData,
     getSelectedChapters,
     isLoading,
     savePersistentChapterSelection,
@@ -28,6 +32,11 @@ export const DailyModal: React.FC = () => {
   const [training, setTraining] = useState({
     running: false,
     strength: false,
+  });
+
+  const [healthMetrics, setHealthMetrics] = useState({
+    weight: '',
+    bodyFatPercentage: '',
   });
 
   const [selectedBooks, setSelectedBooks] = useState<Array<{
@@ -43,6 +52,9 @@ export const DailyModal: React.FC = () => {
       const dateString = format(selectedDate, 'yyyy-MM-dd');
       const existingRecord = dailyRecords.find(
         record => record.date === dateString
+      );
+      const existingHealth = healthData.find(
+        health => health.date === dateString
       );
 
       if (existingRecord) {
@@ -73,8 +85,21 @@ export const DailyModal: React.FC = () => {
         }
         setTraining({ running: false, strength: false });
       }
+
+      // 体重・体脂肪率データの設定
+      if (existingHealth) {
+        setHealthMetrics({
+          weight: existingHealth.weight?.toString() || '',
+          bodyFatPercentage: existingHealth.bodyFatPercentage?.toString() || '',
+        });
+      } else {
+        setHealthMetrics({
+          weight: '',
+          bodyFatPercentage: '',
+        });
+      }
     }
-  }, [selectedDate, dailyRecords, getPersistentChapterSelection]);
+  }, [selectedDate, dailyRecords, healthData, getPersistentChapterSelection]);
 
   // 章選択が変更されたときに永続化
   useEffect(() => {
@@ -91,6 +116,13 @@ export const DailyModal: React.FC = () => {
 
   const handleTrainingChange = (type: 'running' | 'strength') => {
     setTraining(prev => ({ ...prev, [type]: !prev[type] }));
+  };
+
+  const handleHealthMetricsChange = (field: 'weight' | 'bodyFatPercentage', value: string) => {
+    // 数値と小数点のみを許可
+    if (value === '' || /^\d*\.?\d*$/.test(value)) {
+      setHealthMetrics(prev => ({ ...prev, [field]: value }));
+    }
   };
 
   const handleBookSelect = (bookId: string) => {
@@ -130,39 +162,61 @@ export const DailyModal: React.FC = () => {
 
     const dateString = format(selectedDate, 'yyyy-MM-dd');
     const existingRecord = dailyRecords.find(record => record.date === dateString);
-
-    // Build study progress
-    const studyProgress = selectedBooks.flatMap(sb => {
-      const book = books.find(b => b.id === sb.bookId);
-      if (!book) return [];
-      
-      return sb.chapterIds.map(chapterId => {
-        const chapter = book.chapters.find(c => c.id === chapterId);
-        return {
-          bookId: sb.bookId,
-          chapterId,
-          bookName: book.name,
-          chapterName: chapter?.name || '',
-        };
-      });
-    });
-
-    const recordData = {
-      userId: user.id,
-      date: dateString,
-      training,
-      studyProgress,
-    };
+    const existingHealth = healthData.find(health => health.date === dateString);
 
     try {
+      // Build study progress
+      const studyProgress = selectedBooks.flatMap(sb => {
+        const book = books.find(b => b.id === sb.bookId);
+        if (!book) return [];
+        
+        return sb.chapterIds.map(chapterId => {
+          const chapter = book.chapters.find(c => c.id === chapterId);
+          return {
+            bookId: sb.bookId,
+            chapterId,
+            bookName: book.name,
+            chapterName: chapter?.name || '',
+          };
+        });
+      });
+
+      // Save daily record
+      const recordData = {
+        userId: user.id,
+        date: dateString,
+        training,
+        studyProgress,
+      };
+
       if (existingRecord) {
         await updateDailyRecord(existingRecord.id, recordData);
       } else {
         await addDailyRecord(recordData);
       }
+
+      // Save health data if provided
+      const weight = healthMetrics.weight ? parseFloat(healthMetrics.weight) : undefined;
+      const bodyFatPercentage = healthMetrics.bodyFatPercentage ? parseFloat(healthMetrics.bodyFatPercentage) : undefined;
+
+      if (weight !== undefined || bodyFatPercentage !== undefined) {
+        const healthDataToSave = {
+          userId: user.id,
+          date: dateString,
+          weight,
+          bodyFatPercentage,
+        };
+
+        if (existingHealth) {
+          await updateHealthData(existingHealth.id, healthDataToSave);
+        } else {
+          await addHealthData(healthDataToSave);
+        }
+      }
+
       setShowDailyModal(false);
     } catch (error) {
-      console.error('日次記録保存エラー:', error);
+      console.error('記録保存エラー:', error);
       alert('記録の保存に失敗しました。もう一度お試しください。');
     }
   };
@@ -244,6 +298,35 @@ export const DailyModal: React.FC = () => {
               </div>
             </label>
           </div>
+        </div>
+
+        {/* Health Metrics Section */}
+        <div>
+          <h4 className="text-lg font-medium text-gray-900 mb-3 flex items-center gap-2">
+            <Scale className="h-5 w-5" />
+            体重・体脂肪率
+          </h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Input
+              label="体重 (kg)"
+              type="text"
+              value={healthMetrics.weight}
+              onChange={(e) => handleHealthMetricsChange('weight', e.target.value)}
+              placeholder="例: 70.5"
+              className="text-center"
+            />
+            <Input
+              label="体脂肪率 (%)"
+              type="text"
+              value={healthMetrics.bodyFatPercentage}
+              onChange={(e) => handleHealthMetricsChange('bodyFatPercentage', e.target.value)}
+              placeholder="例: 15.2"
+              className="text-center"
+            />
+          </div>
+          <p className="text-xs text-gray-500 mt-2">
+            小数点1桁まで入力可能です。記録しない項目は空欄のままにしてください。
+          </p>
         </div>
 
         {/* Study Section */}
