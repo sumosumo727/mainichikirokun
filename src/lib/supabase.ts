@@ -284,45 +284,6 @@ export const deleteStudyProgress = async (dailyRecordId: string) => {
   return { error };
 };
 
-// Health Data関連
-export const getHealthData = async (userId: string) => {
-  const { data, error } = await supabase
-    .from('health_data')
-    .select('*')
-    .eq('user_id', userId)
-    .order('record_date', { ascending: false });
-  
-  return { data, error };
-};
-
-export const upsertHealthData = async (userId: string, healthData: {
-  record_date: string;
-  weight?: number | null;
-  body_fat_percentage?: number | null;
-}) => {
-  const { data, error } = await supabase
-    .from('health_data')
-    .upsert({
-      user_id: userId,
-      ...healthData,
-    }, {
-      onConflict: 'user_id,record_date'
-    })
-    .select()
-    .single();
-  
-  return { data, error };
-};
-
-export const deleteHealthData = async (healthDataId: string) => {
-  const { error } = await supabase
-    .from('health_data')
-    .delete()
-    .eq('id', healthDataId);
-  
-  return { error };
-};
-
 // 管理者機能
 export const getPendingUsers = async () => {
   const { data, error } = await supabase

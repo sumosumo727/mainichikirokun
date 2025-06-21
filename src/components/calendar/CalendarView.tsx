@@ -75,7 +75,7 @@ export const CalendarView: React.FC = () => {
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-semibold text-gray-900">トレーニング・学習記録</h2>
+        <h2 className="text-xl font-semibold text-gray-900">トレーニングカレンダー</h2>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-4 text-sm text-gray-600">
             <div className="flex items-center gap-2">

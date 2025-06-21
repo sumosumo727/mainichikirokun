@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { Book, DailyRecord, MonthlyStats, Chapter, HealthData } from '../types';
+import type { Book, DailyRecord, MonthlyStats, Chapter } from '../types';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, subMonths, getDaysInMonth } from 'date-fns';
 import { 
   getBooks, 
@@ -14,16 +14,12 @@ import {
   getDailyRecords,
   upsertDailyRecord,
   createStudyProgress,
-  deleteStudyProgress,
-  getHealthData,
-  upsertHealthData,
-  deleteHealthData
+  deleteStudyProgress
 } from '../lib/supabase';
 
 interface AppState {
   books: Book[];
   dailyRecords: DailyRecord[];
-  healthData: HealthData[];
   currentDate: Date;
   selectedDate: Date | null;
   showDailyModal: boolean;
@@ -44,11 +40,6 @@ interface AppState {
   setDailyRecords: (records: DailyRecord[]) => void;
   addDailyRecord: (record: Omit<DailyRecord, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
   updateDailyRecord: (id: string, updates: Partial<DailyRecord>) => Promise<void>;
-  
-  setHealthData: (data: HealthData[]) => void;
-  addHealthData: (data: Omit<HealthData, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
-  updateHealthData: (id: string, updates: Partial<HealthData>) => Promise<void>;
-  deleteHealthDataRecord: (id: string) => Promise<void>;
   
   setCurrentDate: (date: Date) => void;
   setSelectedDate: (date: Date | null) => void;
@@ -118,22 +109,9 @@ const transformSupabaseDailyRecordToDailyRecord = (supabaseRecord: any): DailyRe
   };
 };
 
-const transformSupabaseHealthDataToHealthData = (supabaseData: any): HealthData => {
-  return {
-    id: supabaseData.id,
-    userId: supabaseData.user_id,
-    date: supabaseData.record_date,
-    weight: supabaseData.weight,
-    bodyFatPercentage: supabaseData.body_fat_percentage,
-    createdAt: new Date(supabaseData.created_at),
-    updatedAt: new Date(supabaseData.updated_at),
-  };
-};
-
 export const useAppStore = create<AppState>()((set, get) => ({
   books: [],
   dailyRecords: [],
-  healthData: [],
   currentDate: new Date(),
   selectedDate: null,
   showDailyModal: false,
@@ -461,76 +439,6 @@ export const useAppStore = create<AppState>()((set, get) => ({
     }
   },
 
-  setHealthData: (data) => set({ healthData: data }),
-
-  addHealthData: async (healthDataInput) => {
-    set({ isLoading: true });
-    try {
-      const { data: result, error } = await upsertHealthData(
-        healthDataInput.userId,
-        {
-          record_date: healthDataInput.date,
-          weight: healthDataInput.weight,
-          body_fat_percentage: healthDataInput.bodyFatPercentage,
-        }
-      );
-
-      if (error) throw error;
-      if (!result) throw new Error('健康データの作成に失敗しました');
-
-      const newHealthData: HealthData = transformSupabaseHealthDataToHealthData(result);
-
-      set((state) => {
-        const existingIndex = state.healthData.findIndex(h => h.date === healthDataInput.date);
-        if (existingIndex >= 0) {
-          // 既存のデータを更新
-          const updatedData = [...state.healthData];
-          updatedData[existingIndex] = newHealthData;
-          return { healthData: updatedData, isLoading: false };
-        } else {
-          // 新しいデータを追加
-          return { healthData: [...state.healthData, newHealthData], isLoading: false };
-        }
-      });
-    } catch (error) {
-      console.error('健康データ追加エラー:', error);
-      set({ isLoading: false });
-      throw error;
-    }
-  },
-
-  updateHealthData: async (id, updates) => {
-    // addHealthDataと同じロジックを使用（upsertのため）
-    const state = get();
-    const existingData = state.healthData.find(h => h.id === id);
-    
-    if (existingData) {
-      await get().addHealthData({
-        userId: updates.userId || existingData.userId,
-        date: updates.date || existingData.date,
-        weight: updates.weight !== undefined ? updates.weight : existingData.weight,
-        bodyFatPercentage: updates.bodyFatPercentage !== undefined ? updates.bodyFatPercentage : existingData.bodyFatPercentage,
-      });
-    }
-  },
-
-  deleteHealthDataRecord: async (id) => {
-    set({ isLoading: true });
-    try {
-      const { error } = await deleteHealthData(id);
-      if (error) throw error;
-
-      set((state) => ({
-        healthData: state.healthData.filter(h => h.id !== id),
-        isLoading: false,
-      }));
-    } catch (error) {
-      console.error('健康データ削除エラー:', error);
-      set({ isLoading: false });
-      throw error;
-    }
-  },
-
   setCurrentDate: (date) => set({ currentDate: date }),
   setSelectedDate: (date) => set({ selectedDate: date }),
   setShowDailyModal: (show) => set({ showDailyModal: show }),
@@ -828,19 +736,13 @@ export const useAppStore = create<AppState>()((set, get) => ({
       const { data: recordsData, error: recordsError } = await getDailyRecords(userId);
       if (recordsError) throw recordsError;
 
-      // 健康データを取得
-      const { data: healthDataResult, error: healthError } = await getHealthData(userId);
-      if (healthError) throw healthError;
-
       // データを変換
       const books = (booksData || []).map(transformSupabaseBookToBook);
       const dailyRecords = (recordsData || []).map(transformSupabaseDailyRecordToDailyRecord);
-      const healthData = (healthDataResult || []).map(transformSupabaseHealthDataToHealthData);
 
       set({ 
         books, 
         dailyRecords,
-        healthData,
         isLoading: false 
       });
 
