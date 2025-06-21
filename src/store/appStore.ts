@@ -514,7 +514,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
       })
     }));
     
-    // 永続化された章選択から削除された章の参照を削除
+    // 永続化された章選択から削除された章の参照を削除（改善版）
     const cleanedPersistentSelections = new Map<string, Array<{ bookId: string; chapterIds: string[] }>>();
     persistentChapterSelections.forEach((selections, date) => {
       const validSelections = selections.map(selection => {
@@ -522,14 +522,22 @@ export const useAppStore = create<AppState>()((set, get) => ({
           // 対象の書籍の場合、削除された章名に対応するIDを除外
           const book = books.find(b => b.id === bookId);
           if (book) {
+            // 現在の書籍の章から、削除されていない章のIDのみを保持
             const validChapterIds = selection.chapterIds.filter(chapterId => {
+              // 新しい章リストから該当するIDの章を探す
               const chapter = book.chapters.find(ch => ch.id === chapterId);
-              if (chapter && deletedChapterNameSet.has(chapter.name)) {
-                console.log(`永続化選択から削除: ${chapter.name} (${chapterId})`);
-                return false;
+              if (chapter) {
+                // 章が見つかった場合、その章名が削除対象でなければ保持
+                if (!deletedChapterNameSet.has(chapter.name)) {
+                  return true;
+                }
               }
-              return true;
+              
+              // 章が見つからない、または削除対象の章名の場合は除外
+              console.log(`永続化選択から削除: 章ID=${chapterId}`);
+              return false;
             });
+            
             return { ...selection, chapterIds: validChapterIds };
           }
         }
