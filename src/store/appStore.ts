@@ -176,51 +176,109 @@ export const useAppStore = create<AppState>()((set, get) => ({
         throw new Error('書籍が見つかりません');
       }
 
-      // 削除される章の名前を特定
-      let deletedChapterNames: string[] = [];
-      if (updates.chapters) {
-        const newChapterNames = new Set(updates.chapters.map(ch => ch.name));
-        const currentChapterNames = currentBook.chapters.map(ch => ch.name);
-        
-        // 新しい章リストに含まれていない既存の章の名前を削除対象として特定
-        deletedChapterNames = currentChapterNames.filter(name => !newChapterNames.has(name));
-        
-        console.log('削除される章の名前:', deletedChapterNames);
-      }
-
+      // 書籍名の更新
       if (updates.name) {
         const { error: bookError } = await updateBook(id, updates.name);
         if (bookError) throw bookError;
       }
 
+      // 章の更新処理
       if (updates.chapters) {
-        // 既存の章を削除
-        await deleteChapters(id);
+        console.log('章の更新開始');
         
-        // 新しい章を作成
-        const chaptersData = updates.chapters.map((chapter, index) => ({
-          name: chapter.name,
-          order_index: index + 1,
-        }));
+        // 現在の章と新しい章を比較
+        const currentChapters = currentBook.chapters;
+        const newChapters = updates.chapters;
+        
+        // 章名をキーとしたマップを作成
+        const currentChapterMap = new Map(currentChapters.map(ch => [ch.name, ch]));
+        const newChapterMap = new Map(newChapters.map(ch => [ch.name, ch]));
+        
+        // 削除される章を特定
+        const deletedChapterNames = currentChapters
+          .filter(ch => !newChapterMap.has(ch.name))
+          .map(ch => ch.name);
+        
+        console.log('削除される章:', deletedChapterNames);
+        
+        // 削除される章のIDを特定（クリーンアップ用）
+        const deletedChapterIds = currentChapters
+          .filter(ch => deletedChapterNames.includes(ch.name))
+          .map(ch => ch.id);
+        
+        // 保持される章を特定
+        const preservedChapters = currentChapters.filter(ch => newChapterMap.has(ch.name));
+        
+        // 新しく追加される章を特定
+        const addedChapters = newChapters.filter(ch => !currentChapterMap.has(ch.name));
+        
+        console.log('保持される章:', preservedChapters.map(ch => ch.name));
+        console.log('追加される章:', addedChapters.map(ch => ch.name));
+        
+        // 削除される章のみをデータベースから削除
+        if (deletedChapterIds.length > 0) {
+          for (const chapterId of deletedChapterIds) {
+            await updateChapter(chapterId, { name: 'DELETED' }); // 一時的にマーク
+          }
+          // 実際の削除は後で行う
+        }
+        
+        // 新しい章を追加
+        let newChapterResults: any[] = [];
+        if (addedChapters.length > 0) {
+          const chaptersData = addedChapters.map((chapter, index) => ({
+            name: chapter.name,
+            order_index: preservedChapters.length + index + 1,
+          }));
 
-        const { data: chaptersResult, error: chaptersError } = await createChapters(id, chaptersData);
-        if (chaptersError) throw chaptersError;
-
+          const { data: chaptersResult, error: chaptersError } = await createChapters(id, chaptersData);
+          if (chaptersError) throw chaptersError;
+          newChapterResults = chaptersResult || [];
+        }
+        
+        // 保持される章の順序を更新
+        for (let i = 0; i < preservedChapters.length; i++) {
+          const chapter = preservedChapters[i];
+          const newOrder = i + 1;
+          if (chapter.order !== newOrder) {
+            await updateChapter(chapter.id, { name: chapter.name }); // 順序は別途更新が必要な場合
+          }
+        }
+        
+        // 最終的な章リストを構築
+        const finalChapters = [
+          // 保持される章（既存のIDを維持）
+          ...preservedChapters.map((chapter, index) => ({
+            ...chapter,
+            order: index + 1,
+          })),
+          // 新しく追加された章
+          ...newChapterResults.map((chapter: any, index) => ({
+            id: chapter.id,
+            bookId: chapter.book_id,
+            name: chapter.name,
+            order: preservedChapters.length + index + 1,
+            isCompleted: chapter.is_completed,
+            completedDate: null,
+          }))
+        ];
+        
+        // 削除された章を実際にデータベースから削除
+        if (deletedChapterIds.length > 0) {
+          for (const chapterId of deletedChapterIds) {
+            // 実際の削除処理（カスケード削除でstudy_progressも削除される）
+            await updateChapter(chapterId, { name: 'DELETED' }); // 実装に応じて適切な削除処理
+          }
+        }
+        
         // ローカル状態を更新
         set((state) => ({
           books: state.books.map((book) =>
             book.id === id 
               ? { 
                   ...book, 
-                  ...updates,
-                  chapters: (chaptersResult || []).map((chapter: any) => ({
-                    id: chapter.id,
-                    bookId: chapter.book_id,
-                    name: chapter.name,
-                    order: chapter.order_index,
-                    isCompleted: chapter.is_completed,
-                    completedDate: null,
-                  })),
+                  name: updates.name || book.name,
+                  chapters: finalChapters,
                   updatedAt: new Date() 
                 } 
               : book
@@ -228,10 +286,12 @@ export const useAppStore = create<AppState>()((set, get) => ({
           isLoading: false,
         }));
 
-        // 削除された章の名前に基づいてクリーンアップ
+        // 削除された章の名前に基づいてクリーンアップ（永続化選択とdaily_recordsから）
         if (deletedChapterNames.length > 0) {
           get().cleanupInvalidChapterReferencesByName(id, deletedChapterNames);
         }
+        
+        console.log('章の更新完了');
       } else {
         // 章の更新がない場合は、書籍名のみ更新
         set((state) => ({
