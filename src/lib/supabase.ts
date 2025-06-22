@@ -161,6 +161,15 @@ export const deleteChapters = async (bookId: string) => {
   return { error };
 };
 
+export const deleteMultipleChapters = async (chapterIds: string[]) => {
+  const { error } = await supabase
+    .from('chapters')
+    .delete()
+    .in('id', chapterIds);
+  
+  return { error };
+};
+
 // Daily Records関連
 export const getDailyRecords = async (userId: string) => {
   const { data, error } = await supabase
@@ -250,6 +259,15 @@ export const deleteStudyProgress = async (dailyRecordId: string) => {
     .from('study_progress')
     .delete()
     .eq('daily_record_id', dailyRecordId);
+  
+  return { error };
+};
+
+export const deleteStudyProgressByChapterIds = async (chapterIds: string[]) => {
+  const { error } = await supabase
+    .from('study_progress')
+    .delete()
+    .in('chapter_id', chapterIds);
   
   return { error };
 };
