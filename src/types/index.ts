@@ -87,18 +87,7 @@ export interface DailyInputModal {
   }>;
 }
 
-// 体重・体脂肪率データの型定義
-export interface BodyMetrics {
-  id: string;
-  userId: string;
-  date: string; // YYYY-MM-DD
-  weight?: number; // kg
-  bodyFatPercentage?: number; // %
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-// 健康データ関連の型定義（既存のHealthDataを置き換え）
+// 健康データ関連の型定義
 export interface HealthData {
   id: string;
   userId: string;
@@ -113,14 +102,4 @@ export interface HealthKitData {
   weight: number;
   bodyFatPercentage: number;
   date: string;
-}
-
-// 統計表示用の期間選択
-export type StatsPeriod = 'week' | 'month' | 'year';
-
-// 体重・体脂肪率のチャートデータ
-export interface BodyMetricsChartData {
-  date: string;
-  weight?: number;
-  bodyFatPercentage?: number;
 }

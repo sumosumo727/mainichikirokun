@@ -161,36 +161,6 @@ export const deleteChapters = async (bookId: string) => {
   return { error };
 };
 
-// 特定の章を削除する関数（新規追加）
-export const deleteChapter = async (chapterId: string) => {
-  const { error } = await supabase
-    .from('chapters')
-    .delete()
-    .eq('id', chapterId);
-  
-  return { error };
-};
-
-// 複数の章を削除する関数（新規追加）
-export const deleteMultipleChapters = async (chapterIds: string[]) => {
-  const { error } = await supabase
-    .from('chapters')
-    .delete()
-    .in('id', chapterIds);
-  
-  return { error };
-};
-
-// study_progressから特定の章のレコードを削除する関数（新規追加）
-export const deleteStudyProgressByChapterIds = async (chapterIds: string[]) => {
-  const { error } = await supabase
-    .from('study_progress')
-    .delete()
-    .in('chapter_id', chapterIds);
-  
-  return { error };
-};
-
 // Daily Records関連
 export const getDailyRecords = async (userId: string) => {
   const { data, error } = await supabase
@@ -284,13 +254,44 @@ export const deleteStudyProgress = async (dailyRecordId: string) => {
   return { error };
 };
 
-// Health Data関連（体重・体脂肪率）
+// Health Data関連
 export const getHealthData = async (userId: string) => {
   const { data, error } = await supabase
     .from('health_data')
     .select('*')
     .eq('user_id', userId)
     .order('record_date', { ascending: false });
+  
+  return { data, error };
+};
+
+export const createHealthData = async (userId: string, healthData: {
+  record_date: string;
+  weight?: number;
+  body_fat_percentage?: number;
+}) => {
+  const { data, error } = await supabase
+    .from('health_data')
+    .insert({
+      user_id: userId,
+      ...healthData,
+    })
+    .select()
+    .single();
+  
+  return { data, error };
+};
+
+export const updateHealthData = async (recordId: string, updates: {
+  weight?: number;
+  body_fat_percentage?: number;
+}) => {
+  const { data, error } = await supabase
+    .from('health_data')
+    .update(updates)
+    .eq('id', recordId)
+    .select()
+    .single();
   
   return { data, error };
 };
@@ -314,12 +315,11 @@ export const upsertHealthData = async (userId: string, healthData: {
   return { data, error };
 };
 
-export const deleteHealthData = async (userId: string, date: string) => {
+export const deleteHealthData = async (recordId: string) => {
   const { error } = await supabase
     .from('health_data')
     .delete()
-    .eq('user_id', userId)
-    .eq('record_date', date);
+    .eq('id', recordId);
   
   return { error };
 };
