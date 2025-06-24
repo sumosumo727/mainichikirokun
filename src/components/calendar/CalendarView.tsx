@@ -40,35 +40,46 @@ export const CalendarView: React.FC = () => {
     const hasBodyFat = health?.bodyFatPercentage !== undefined && health?.bodyFatPercentage !== null;
 
     return (
-      <div className="mt-1 w-full">
-        {/* アクティビティアイコン */}
-        <div className="flex justify-center items-center gap-1 mb-1 flex-wrap">
+      <div className="mt-1 w-full h-full flex flex-col justify-between">
+        {/* 1段目: トレーニングアイコン */}
+        <div className="flex justify-center items-center gap-1 h-4">
           {hasRunning && (
             <PersonStanding className="w-3 h-3 text-blue-600" title="ランニング" />
           )}
           {hasStrength && (
             <Dumbbell className="w-3 h-3 text-green-600" title="筋力トレーニング" />
           )}
-          {hasStudy && (
-            <BookOpen className="w-3 h-3 text-amber-600" title="学習" />
-          )}
-          {(hasWeight || hasBodyFat) && (
-            <Scale className="w-3 h-3 text-purple-600" title="体重・体脂肪率" />
-          )}
         </div>
         
-        {/* 詳細情報 */}
-        <div className="text-xs text-gray-600 leading-tight text-center">
-          {hasStudy && record && (
-            <div className="truncate">
-              {record.studyProgress.length}章完了
+        {/* 2段目: 体重データまたは書籍データ */}
+        <div className="flex justify-center items-center h-4">
+          {(hasWeight || hasBodyFat) ? (
+            <div className="flex items-center gap-1">
+              <Scale className="w-3 h-3 text-purple-600" />
+              <span className="text-xs text-purple-700 font-medium">
+                {hasWeight && `${health?.weight}kg`}
+                {hasWeight && hasBodyFat && '/'}
+                {hasBodyFat && `${health?.bodyFatPercentage}%`}
+              </span>
             </div>
-          )}
-          {(hasWeight || hasBodyFat) && health && (
-            <div className="truncate">
-              {hasWeight && `${health.weight}kg`}
-              {hasWeight && hasBodyFat && ' / '}
-              {hasBodyFat && `${health.bodyFatPercentage}%`}
+          ) : hasStudy ? (
+            <div className="flex items-center gap-1">
+              <BookOpen className="w-3 h-3 text-amber-600" />
+              <span className="text-xs text-amber-700 font-medium">
+                {record?.studyProgress.length}章
+              </span>
+            </div>
+          ) : null}
+        </div>
+        
+        {/* 3段目: 書籍データ（体重データがある場合のみ） */}
+        <div className="flex justify-center items-center h-4">
+          {(hasWeight || hasBodyFat) && hasStudy && (
+            <div className="flex items-center gap-1">
+              <BookOpen className="w-3 h-3 text-amber-600" />
+              <span className="text-xs text-amber-700 font-medium">
+                {record?.studyProgress.length}章
+              </span>
             </div>
           )}
         </div>
@@ -135,22 +146,32 @@ export const CalendarView: React.FC = () => {
       {/* カレンダーの詳細表示エリア */}
       <div className="mt-6 p-4 bg-gray-50 rounded-lg">
         <h3 className="text-sm font-medium text-gray-700 mb-3">カレンダーの見方</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm text-gray-600">
-          <div className="flex items-center gap-3">
-            <PersonStanding className="w-4 h-4 text-blue-600 flex-shrink-0" />
-            <span>ランニングを実施した日</span>
+        <div className="space-y-2 text-sm text-gray-600">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="flex items-center gap-3">
+              <PersonStanding className="w-4 h-4 text-blue-600 flex-shrink-0" />
+              <span>ランニングを実施した日</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <Dumbbell className="w-4 h-4 text-green-600 flex-shrink-0" />
+              <span>筋力トレーニングを実施した日</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <BookOpen className="w-4 h-4 text-amber-600 flex-shrink-0" />
+              <span>学習を行った日</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <Scale className="w-4 h-4 text-purple-600 flex-shrink-0" />
+              <span>体重・体脂肪率を記録した日</span>
+            </div>
           </div>
-          <div className="flex items-center gap-3">
-            <Dumbbell className="w-4 h-4 text-green-600 flex-shrink-0" />
-            <span>筋力トレーニングを実施した日</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <BookOpen className="w-4 h-4 text-amber-600 flex-shrink-0" />
-            <span>学習を行った日</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <Scale className="w-4 h-4 text-purple-600 flex-shrink-0" />
-            <span>体重・体脂肪率を記録した日</span>
+          <div className="mt-3 p-3 bg-blue-50 rounded-lg">
+            <h4 className="text-sm font-medium text-blue-900 mb-2">表示レイアウト:</h4>
+            <div className="space-y-1 text-xs text-blue-800">
+              <p><strong>1段目:</strong> トレーニングアイコン（ランニング・筋力トレーニング）</p>
+              <p><strong>2段目:</strong> 体重・体脂肪率データ（記録がある場合）、または学習データ</p>
+              <p><strong>3段目:</strong> 学習データ（体重データがある場合のみ）</p>
+            </div>
           </div>
         </div>
         <p className="text-xs text-gray-500 mt-3">
@@ -166,7 +187,7 @@ export const CalendarView: React.FC = () => {
         }
         
         .calendar-container .react-calendar__tile {
-          height: 100px;
+          height: 110px;
           display: flex;
           flex-direction: column;
           align-items: center;

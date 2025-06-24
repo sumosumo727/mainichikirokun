@@ -6,7 +6,7 @@ interface StatsCardProps {
   title: string;
   value: string | number;
   icon: React.ReactNode;
-  color: 'blue' | 'green' | 'amber' | 'red';
+  color: 'blue' | 'green' | 'amber' | 'red' | 'purple';
   trend?: {
     value: number;
     isPositive: boolean;
@@ -27,6 +27,7 @@ export const StatsCard: React.FC<StatsCardProps> = ({
     green: 'bg-green-50 text-green-700',
     amber: 'bg-amber-50 text-amber-700',
     red: 'bg-red-50 text-red-700',
+    purple: 'bg-purple-50 text-purple-700',
   };
 
   return (
