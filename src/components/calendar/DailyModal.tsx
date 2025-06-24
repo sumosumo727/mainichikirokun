@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { format } from 'date-fns';
-import { PersonStanding, Dumbbell, BookOpen, Save, CheckCircle, Scale } from 'lucide-react';
+import { Save, CheckCircle, Scale } from 'lucide-react';
 import { Modal } from '../ui/Modal';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
@@ -268,7 +268,11 @@ export const DailyModal: React.FC = () => {
         {/* Training Section */}
         <div>
           <h4 className="text-lg font-medium text-gray-900 mb-3 flex items-center gap-2">
-            <Dumbbell className="h-5 w-5" />
+            <img 
+              src="http://flat-icon-design.com/f/f_health_20/s512_f_health_20_2nbg.png" 
+              alt="トレーニング"
+              className="h-5 w-5"
+            />
             トレーニング
           </h4>
           <div className="space-y-3">
@@ -280,8 +284,12 @@ export const DailyModal: React.FC = () => {
                 className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
               />
               <div className="flex items-center gap-2">
-                <PersonStanding className="h-4 w-4 text-blue-600" />
-                <span className="text-sm font-medium">ランニング</span>
+                <img 
+                  src="http://flat-icon-design.com/f/f_event_84/s512_f_event_84_1nbg.png" 
+                  alt="有酸素"
+                  className="h-4 w-4"
+                />
+                <span className="text-sm font-medium">有酸素</span>
               </div>
             </label>
             
@@ -293,7 +301,11 @@ export const DailyModal: React.FC = () => {
                 className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
               />
               <div className="flex items-center gap-2">
-                <Dumbbell className="h-4 w-4 text-green-600" />
+                <img 
+                  src="http://flat-icon-design.com/f/f_health_20/s512_f_health_20_2nbg.png" 
+                  alt="筋力トレーニング"
+                  className="h-4 w-4"
+                />
                 <span className="text-sm font-medium">筋力トレーニング</span>
               </div>
             </label>
@@ -303,7 +315,11 @@ export const DailyModal: React.FC = () => {
         {/* Health Metrics Section */}
         <div>
           <h4 className="text-lg font-medium text-gray-900 mb-3 flex items-center gap-2">
-            <Scale className="h-5 w-5" />
+            <img 
+              src="http://flat-icon-design.com/f/f_health_18/s512_f_health_18_1nbg.png" 
+              alt="体重・体脂肪率"
+              className="h-5 w-5"
+            />
             体重・体脂肪率
           </h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -332,13 +348,21 @@ export const DailyModal: React.FC = () => {
         {/* Study Section */}
         <div>
           <h4 className="text-lg font-medium text-gray-900 mb-3 flex items-center gap-2">
-            <BookOpen className="h-5 w-5" />
+            <img 
+              src="http://flat-icon-design.com/f/f_object_173/s512_f_object_173_2nbg.png" 
+              alt="学習"
+              className="h-5 w-5"
+            />
             学習進捗
           </h4>
           
           {availableBooks.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
-              <BookOpen className="h-12 w-12 mx-auto mb-2 text-gray-300" />
+              <img 
+                src="http://flat-icon-design.com/f/f_object_173/s512_f_object_173_2nbg.png" 
+                alt="学習"
+                className="h-12 w-12 mx-auto mb-2 opacity-30"
+              />
               <p>選択可能な書籍がありません</p>
               <p className="text-sm">すべての書籍が完了しているか、書籍を追加してください。</p>
             </div>
