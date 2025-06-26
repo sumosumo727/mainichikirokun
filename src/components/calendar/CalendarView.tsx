@@ -49,20 +49,24 @@ export const CalendarView: React.FC = () => {
         {hasTrainingData && (
           <div className="flex justify-center items-center gap-1 h-4">
             {hasStrength && (
-              <img 
-                src="http://flat-icon-design.com/f/f_health_20/s512_f_health_20_2nbg.png" 
-                alt="筋力トレーニング"
-                className="w-3 h-3"
-                title="筋力トレーニング"
-              />
+              <div className="w-4 h-4 bg-green-100 rounded-full flex items-center justify-center">
+                <img 
+                  src="http://flat-icon-design.com/f/f_health_20/svg_f_health_20_0.svg" 
+                  alt="筋力トレーニング"
+                  className="w-2.5 h-2.5"
+                  title="筋力トレーニング"
+                />
+              </div>
             )}
             {hasRunning && (
-              <img 
-                src="http://flat-icon-design.com/f/f_event_84/s512_f_event_84_1nbg.png" 
-                alt="有酸素"
-                className="w-3 h-3"
-                title="有酸素"
-              />
+              <div className="w-4 h-4 bg-blue-100 rounded-full flex items-center justify-center">
+                <img 
+                  src="http://flat-icon-design.com/f/f_event_84/svg_f_event_84_0.svg" 
+                  alt="有酸素"
+                  className="w-2.5 h-2.5"
+                  title="有酸素"
+                />
+              </div>
             )}
           </div>
         )}
@@ -71,12 +75,14 @@ export const CalendarView: React.FC = () => {
         <div className="flex justify-center items-center h-4">
           {hasHealthData ? (
             <div className="flex items-center gap-1">
-              <img 
-                src="http://flat-icon-design.com/f/f_health_18/s512_f_health_18_1nbg.png" 
-                alt="体重・体脂肪率"
-                className="w-3 h-3"
-                title="体重・体脂肪率"
-              />
+              <div className="w-4 h-4 bg-purple-100 rounded-full flex items-center justify-center">
+                <img 
+                  src="http://flat-icon-design.com/f/f_health_18/svg_f_health_18_0.svg" 
+                  alt="体重・体脂肪率"
+                  className="w-2.5 h-2.5"
+                  title="体重・体脂肪率"
+                />
+              </div>
               <span className="text-xs text-purple-700 font-medium">
                 {hasWeight && `${health?.weight}kg`}
                 {hasWeight && hasBodyFat && '/'}
@@ -85,12 +91,14 @@ export const CalendarView: React.FC = () => {
             </div>
           ) : hasStudy ? (
             <div className="flex items-center gap-1">
-              <img 
-                src="http://flat-icon-design.com/f/f_object_173/s512_f_object_173_2nbg.png" 
-                alt="学習"
-                className="w-3 h-3"
-                title="学習"
-              />
+              <div className="w-4 h-4 bg-amber-100 rounded-full flex items-center justify-center">
+                <img 
+                  src="http://flat-icon-design.com/f/f_object_173/svg_f_object_173_0.svg" 
+                  alt="学習"
+                  className="w-2.5 h-2.5"
+                  title="学習"
+                />
+              </div>
               <span className="text-xs text-amber-700 font-medium">
                 {record?.studyProgress.length}章
               </span>
@@ -102,12 +110,14 @@ export const CalendarView: React.FC = () => {
         {hasHealthData && hasStudy && (
           <div className="flex justify-center items-center h-4">
             <div className="flex items-center gap-1">
-              <img 
-                src="http://flat-icon-design.com/f/f_object_173/s512_f_object_173_2nbg.png" 
-                alt="学習"
-                className="w-3 h-3"
-                title="学習"
-              />
+              <div className="w-4 h-4 bg-amber-100 rounded-full flex items-center justify-center">
+                <img 
+                  src="http://flat-icon-design.com/f/f_object_173/svg_f_object_173_0.svg" 
+                  alt="学習"
+                  className="w-2.5 h-2.5"
+                  title="学習"
+                />
+              </div>
               <span className="text-xs text-amber-700 font-medium">
                 {record?.studyProgress.length}章
               </span>
@@ -122,12 +132,14 @@ export const CalendarView: React.FC = () => {
             <div className="flex justify-center items-center h-4">
               {hasHealthData ? (
                 <div className="flex items-center gap-1">
-                  <img 
-                    src="http://flat-icon-design.com/f/f_health_18/s512_f_health_18_1nbg.png" 
-                    alt="体重・体脂肪率"
-                    className="w-3 h-3"
-                    title="体重・体脂肪率"
-                  />
+                  <div className="w-4 h-4 bg-purple-100 rounded-full flex items-center justify-center">
+                    <img 
+                      src="http://flat-icon-design.com/f/f_health_18/svg_f_health_18_0.svg" 
+                      alt="体重・体脂肪率"
+                      className="w-2.5 h-2.5"
+                      title="体重・体脂肪率"
+                    />
+                  </div>
                   <span className="text-xs text-purple-700 font-medium">
                     {hasWeight && `${health?.weight}kg`}
                     {hasWeight && hasBodyFat && '/'}
@@ -136,12 +148,14 @@ export const CalendarView: React.FC = () => {
                 </div>
               ) : hasStudy ? (
                 <div className="flex items-center gap-1">
-                  <img 
-                    src="http://flat-icon-design.com/f/f_object_173/s512_f_object_173_2nbg.png" 
-                    alt="学習"
-                    className="w-3 h-3"
-                    title="学習"
-                  />
+                  <div className="w-4 h-4 bg-amber-100 rounded-full flex items-center justify-center">
+                    <img 
+                      src="http://flat-icon-design.com/f/f_object_173/svg_f_object_173_0.svg" 
+                      alt="学習"
+                      className="w-2.5 h-2.5"
+                      title="学習"
+                    />
+                  </div>
                   <span className="text-xs text-amber-700 font-medium">
                     {record?.studyProgress.length}章
                   </span>
@@ -153,12 +167,14 @@ export const CalendarView: React.FC = () => {
             {hasHealthData && hasStudy && (
               <div className="flex justify-center items-center h-4">
                 <div className="flex items-center gap-1">
-                  <img 
-                    src="http://flat-icon-design.com/f/f_object_173/s512_f_object_173_2nbg.png" 
-                    alt="学習"
-                    className="w-3 h-3"
-                    title="学習"
-                  />
+                  <div className="w-4 h-4 bg-amber-100 rounded-full flex items-center justify-center">
+                    <img 
+                      src="http://flat-icon-design.com/f/f_object_173/svg_f_object_173_0.svg" 
+                      alt="学習"
+                      className="w-2.5 h-2.5"
+                      title="学習"
+                    />
+                  </div>
                   <span className="text-xs text-amber-700 font-medium">
                     {record?.studyProgress.length}章
                   </span>
@@ -190,35 +206,43 @@ export const CalendarView: React.FC = () => {
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-4 text-sm text-gray-600">
             <div className="flex items-center gap-2">
-              <img 
-                src="http://flat-icon-design.com/f/f_event_84/s512_f_event_84_1nbg.png" 
-                alt="有酸素"
-                className="w-4 h-4"
-              />
+              <div className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center">
+                <img 
+                  src="http://flat-icon-design.com/f/f_event_84/svg_f_event_84_0.svg" 
+                  alt="有酸素"
+                  className="w-3 h-3"
+                />
+              </div>
               <span>有酸素</span>
             </div>
             <div className="flex items-center gap-2">
-              <img 
-                src="http://flat-icon-design.com/f/f_health_20/s512_f_health_20_2nbg.png" 
-                alt="筋力トレーニング"
-                className="w-4 h-4"
-              />
+              <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center">
+                <img 
+                  src="http://flat-icon-design.com/f/f_health_20/svg_f_health_20_0.svg" 
+                  alt="筋力トレーニング"
+                  className="w-3 h-3"
+                />
+              </div>
               <span>筋力トレーニング</span>
             </div>
             <div className="flex items-center gap-2">
-              <img 
-                src="http://flat-icon-design.com/f/f_object_173/s512_f_object_173_2nbg.png" 
-                alt="学習"
-                className="w-4 h-4"
-              />
+              <div className="w-5 h-5 bg-amber-100 rounded-full flex items-center justify-center">
+                <img 
+                  src="http://flat-icon-design.com/f/f_object_173/svg_f_object_173_0.svg" 
+                  alt="学習"
+                  className="w-3 h-3"
+                />
+              </div>
               <span>学習</span>
             </div>
             <div className="flex items-center gap-2">
-              <img 
-                src="http://flat-icon-design.com/f/f_health_18/s512_f_health_18_1nbg.png" 
-                alt="体重・体脂肪率"
-                className="w-4 h-4"
-              />
+              <div className="w-5 h-5 bg-purple-100 rounded-full flex items-center justify-center">
+                <img 
+                  src="http://flat-icon-design.com/f/f_health_18/svg_f_health_18_0.svg" 
+                  alt="体重・体脂肪率"
+                  className="w-3 h-3"
+                />
+              </div>
               <span>体重・体脂肪率</span>
             </div>
           </div>
@@ -249,35 +273,43 @@ export const CalendarView: React.FC = () => {
         <div className="space-y-2 text-sm text-gray-600">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="flex items-center gap-3">
-              <img 
-                src="http://flat-icon-design.com/f/f_event_84/s512_f_event_84_1nbg.png" 
-                alt="有酸素"
-                className="w-4 h-4 flex-shrink-0"
-              />
+              <div className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center">
+                <img 
+                  src="http://flat-icon-design.com/f/f_event_84/svg_f_event_84_0.svg" 
+                  alt="有酸素"
+                  className="w-3 h-3"
+                />
+              </div>
               <span>有酸素運動を実施した日</span>
             </div>
             <div className="flex items-center gap-3">
-              <img 
-                src="http://flat-icon-design.com/f/f_health_20/s512_f_health_20_2nbg.png" 
-                alt="筋力トレーニング"
-                className="w-4 h-4 flex-shrink-0"
-              />
+              <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center">
+                <img 
+                  src="http://flat-icon-design.com/f/f_health_20/svg_f_health_20_0.svg" 
+                  alt="筋力トレーニング"
+                  className="w-3 h-3"
+                />
+              </div>
               <span>筋力トレーニングを実施した日</span>
             </div>
             <div className="flex items-center gap-3">
-              <img 
-                src="http://flat-icon-design.com/f/f_object_173/s512_f_object_173_2nbg.png" 
-                alt="学習"
-                className="w-4 h-4 flex-shrink-0"
-              />
+              <div className="w-5 h-5 bg-amber-100 rounded-full flex items-center justify-center">
+                <img 
+                  src="http://flat-icon-design.com/f/f_object_173/svg_f_object_173_0.svg" 
+                  alt="学習"
+                  className="w-3 h-3"
+                />
+              </div>
               <span>学習を行った日</span>
             </div>
             <div className="flex items-center gap-3">
-              <img 
-                src="http://flat-icon-design.com/f/f_health_18/s512_f_health_18_1nbg.png" 
-                alt="体重・体脂肪率"
-                className="w-4 h-4 flex-shrink-0"
-              />
+              <div className="w-5 h-5 bg-purple-100 rounded-full flex items-center justify-center">
+                <img 
+                  src="http://flat-icon-design.com/f/f_health_18/svg_f_health_18_0.svg" 
+                  alt="体重・体脂肪率"
+                  className="w-3 h-3"
+                />
+              </div>
               <span>体重・体脂肪率を記録した日</span>
             </div>
           </div>
