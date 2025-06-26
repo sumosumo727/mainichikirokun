@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { format } from 'date-fns';
-import { Save, CheckCircle, Scale, Dumbbell, Bike, BookOpen } from 'lucide-react';
+import { Save, CheckCircle } from 'lucide-react';
 import { Modal } from '../ui/Modal';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
@@ -269,7 +269,11 @@ export const DailyModal: React.FC = () => {
         <div>
           <h4 className="text-lg font-medium text-gray-900 mb-3 flex items-center gap-2">
             <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center">
-              <Dumbbell className="w-3 h-3 text-green-700" />
+              <img 
+                src="/icons/dumbbell.svg" 
+                alt="トレーニング"
+                className="w-3 h-3"
+              />
             </div>
             トレーニング
           </h4>
@@ -283,7 +287,11 @@ export const DailyModal: React.FC = () => {
               />
               <div className="flex items-center gap-2">
                 <div className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center">
-                  <Bike className="w-3 h-3 text-blue-700" />
+                  <img 
+                    src="/icons/bicycle.svg" 
+                    alt="有酸素"
+                    className="w-3 h-3"
+                  />
                 </div>
                 <span className="text-sm font-medium">有酸素</span>
               </div>
@@ -298,7 +306,11 @@ export const DailyModal: React.FC = () => {
               />
               <div className="flex items-center gap-2">
                 <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center">
-                  <Dumbbell className="w-3 h-3 text-green-700" />
+                  <img 
+                    src="/icons/dumbbell.svg" 
+                    alt="筋力トレーニング"
+                    className="w-3 h-3"
+                  />
                 </div>
                 <span className="text-sm font-medium">筋力トレーニング</span>
               </div>
@@ -310,11 +322,15 @@ export const DailyModal: React.FC = () => {
         <div>
           <h4 className="text-lg font-medium text-gray-900 mb-3 flex items-center gap-2">
             <div className="w-5 h-5 bg-purple-100 rounded-full flex items-center justify-center">
-              <Scale className="w-3 h-3 text-purple-700" />
+              <img 
+                src="/icons/scale.svg" 
+                alt="体重・体脂肪率"
+                className="w-3 h-3"
+              />
             </div>
             体重・体脂肪率
           </h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 m:grid-cols-2 gap-4">
             <Input
               label="体重 (kg)"
               type="text"
@@ -341,7 +357,11 @@ export const DailyModal: React.FC = () => {
         <div>
           <h4 className="text-lg font-medium text-gray-900 mb-3 flex items-center gap-2">
             <div className="w-5 h-5 bg-amber-100 rounded-full flex items-center justify-center">
-              <BookOpen className="w-3 h-3 text-amber-700" />
+              <img 
+                src="/icons/notebook.svg" 
+                alt="学習"
+                className="w-3 h-3"
+              />
             </div>
             学習進捗
           </h4>
@@ -349,7 +369,11 @@ export const DailyModal: React.FC = () => {
           {availableBooks.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
               <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                <BookOpen className="w-6 h-6 text-amber-700 opacity-30" />
+                <img 
+                  src="/icons/notebook.svg" 
+                  alt="学習"
+                  className="w-6 h-6 opacity-30"
+                />
               </div>
               <p>選択可能な書籍がありません</p>
               <p className="text-sm">すべての書籍が完了しているか、書籍を追加してください。</p>
