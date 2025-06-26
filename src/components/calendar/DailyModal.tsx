@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { format } from 'date-fns';
-import { Save, CheckCircle, Scale } from 'lucide-react';
+import { Save, CheckCircle, Scale, Dumbbell, Bike, BookOpen } from 'lucide-react';
 import { Modal } from '../ui/Modal';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
@@ -269,11 +269,7 @@ export const DailyModal: React.FC = () => {
         <div>
           <h4 className="text-lg font-medium text-gray-900 mb-3 flex items-center gap-2">
             <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center">
-              <img 
-                src="http://flat-icon-design.com/f/f_health_20/svg_f_health_20_0.svg" 
-                alt="トレーニング"
-                className="w-3 h-3"
-              />
+              <Dumbbell className="w-3 h-3 text-green-700" />
             </div>
             トレーニング
           </h4>
@@ -287,11 +283,7 @@ export const DailyModal: React.FC = () => {
               />
               <div className="flex items-center gap-2">
                 <div className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center">
-                  <img 
-                    src="http://flat-icon-design.com/f/f_event_84/svg_f_event_84_0.svg" 
-                    alt="有酸素"
-                    className="w-3 h-3"
-                  />
+                  <Bike className="w-3 h-3 text-blue-700" />
                 </div>
                 <span className="text-sm font-medium">有酸素</span>
               </div>
@@ -306,11 +298,7 @@ export const DailyModal: React.FC = () => {
               />
               <div className="flex items-center gap-2">
                 <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center">
-                  <img 
-                    src="http://flat-icon-design.com/f/f_health_20/svg_f_health_20_0.svg" 
-                    alt="筋力トレーニング"
-                    className="w-3 h-3"
-                  />
+                  <Dumbbell className="w-3 h-3 text-green-700" />
                 </div>
                 <span className="text-sm font-medium">筋力トレーニング</span>
               </div>
@@ -322,11 +310,7 @@ export const DailyModal: React.FC = () => {
         <div>
           <h4 className="text-lg font-medium text-gray-900 mb-3 flex items-center gap-2">
             <div className="w-5 h-5 bg-purple-100 rounded-full flex items-center justify-center">
-              <img 
-                src="http://flat-icon-design.com/f/f_health_18/svg_f_health_18_0.svg" 
-                alt="体重・体脂肪率"
-                className="w-3 h-3"
-              />
+              <Scale className="w-3 h-3 text-purple-700" />
             </div>
             体重・体脂肪率
           </h4>
@@ -357,11 +341,7 @@ export const DailyModal: React.FC = () => {
         <div>
           <h4 className="text-lg font-medium text-gray-900 mb-3 flex items-center gap-2">
             <div className="w-5 h-5 bg-amber-100 rounded-full flex items-center justify-center">
-              <img 
-                src="http://flat-icon-design.com/f/f_object_173/svg_f_object_173_0.svg" 
-                alt="学習"
-                className="w-3 h-3"
-              />
+              <BookOpen className="w-3 h-3 text-amber-700" />
             </div>
             学習進捗
           </h4>
@@ -369,11 +349,7 @@ export const DailyModal: React.FC = () => {
           {availableBooks.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
               <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                <img 
-                  src="http://flat-icon-design.com/f/f_object_173/svg_f_object_173_0.svg" 
-                  alt="学習"
-                  className="w-6 h-6 opacity-30"
-                />
+                <BookOpen className="w-6 h-6 text-amber-700 opacity-30" />
               </div>
               <p>選択可能な書籍がありません</p>
               <p className="text-sm">すべての書籍が完了しているか、書籍を追加してください。</p>
