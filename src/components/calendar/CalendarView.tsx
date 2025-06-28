@@ -44,7 +44,7 @@ export const CalendarView: React.FC = () => {
     const hasTrainingData = hasRunning || hasStrength;
 
     return (
-      <div className="mt-1 w-full h-full flex flex-col justify-between">
+      <div className="mt-1 w-full h-full flex flex-col justify-start gap-1">
         {/* 1段目: トレーニングアイコン（データがある場合のみ） */}
         {hasTrainingData && (
           <div className="flex justify-center items-center gap-1 h-4">
@@ -72,8 +72,8 @@ export const CalendarView: React.FC = () => {
         )}
         
         {/* 2段目: 体重データ（優先）または学習データ */}
-        <div className="flex justify-center items-center h-4">
-          {hasHealthData ? (
+        {hasHealthData && (
+          <div className="flex justify-center items-center h-4">
             <div className="flex items-center gap-1">
               <div className="w-4 h-4 bg-purple-100 rounded-full flex items-center justify-center">
                 <img 
@@ -89,25 +89,11 @@ export const CalendarView: React.FC = () => {
                 {hasBodyFat && `${health?.bodyFatPercentage}%`}
               </span>
             </div>
-          ) : hasStudy ? (
-            <div className="flex items-center gap-1">
-              <div className="w-4 h-4 bg-amber-100 rounded-full flex items-center justify-center">
-                <img 
-                  src="/icons/notebook.svg" 
-                  alt="学習"
-                  className="w-2.5 h-2.5"
-                  title="学習"
-                />
-              </div>
-              <span className="text-xs text-amber-700 font-medium">
-                {record?.studyProgress.length}章
-              </span>
-            </div>
-          ) : null}
-        </div>
+          </div>
+        )}
         
-        {/* 3段目: 学習データ（体重データがある場合のみ） */}
-        {hasHealthData && hasStudy && (
+        {/* 3段目: 学習データ（体重データがない場合、または体重データがある場合の追加表示） */}
+        {hasStudy && (
           <div className="flex justify-center items-center h-4">
             <div className="flex items-center gap-1">
               <div className="w-4 h-4 bg-amber-100 rounded-full flex items-center justify-center">
@@ -123,65 +109,6 @@ export const CalendarView: React.FC = () => {
               </span>
             </div>
           </div>
-        )}
-
-        {/* トレーニングデータがない場合の上詰め表示 */}
-        {!hasTrainingData && (
-          <>
-            {/* 1段目に体重データまたは学習データ */}
-            <div className="flex justify-center items-center h-4">
-              {hasHealthData ? (
-                <div className="flex items-center gap-1">
-                  <div className="w-4 h-4 bg-purple-100 rounded-full flex items-center justify-center">
-                    <img 
-                      src="/icons/scale.svg" 
-                      alt="体重・体脂肪率"
-                      className="w-2.5 h-2.5"
-                      title="体重・体脂肪率"
-                    />
-                  </div>
-                  <span className="text-xs text-purple-700 font-medium">
-                    {hasWeight && `${health?.weight}kg`}
-                    {hasWeight && hasBodyFat && '/'}
-                    {hasBodyFat && `${health?.bodyFatPercentage}%`}
-                  </span>
-                </div>
-              ) : hasStudy ? (
-                <div className="flex items-center gap-1">
-                  <div className="w-4 h-4 bg-amber-100 rounded-full flex items-center justify-center">
-                    <img 
-                      src="/icons/notebook.svg" 
-                      alt="学習"
-                      className="w-2.5 h-2.5"
-                      title="学習"
-                    />
-                  </div>
-                  <span className="text-xs text-amber-700 font-medium">
-                    {record?.studyProgress.length}章
-                  </span>
-                </div>
-              ) : null}
-            </div>
-            
-            {/* 2段目に学習データ（体重データがある場合のみ） */}
-            {hasHealthData && hasStudy && (
-              <div className="flex justify-center items-center h-4">
-                <div className="flex items-center gap-1">
-                  <div className="w-4 h-4 bg-amber-100 rounded-full flex items-center justify-center">
-                    <img 
-                      src="/icons/notebook.svg" 
-                      alt="学習"
-                      className="w-2.5 h-2.5"
-                      title="学習"
-                    />
-                  </div>
-                  <span className="text-xs text-amber-700 font-medium">
-                    {record?.studyProgress.length}章
-                  </span>
-                </div>
-              </div>
-            )}
-          </>
         )}
       </div>
     );
@@ -316,11 +243,11 @@ export const CalendarView: React.FC = () => {
           <div className="mt-3 p-3 bg-blue-50 rounded-lg">
             <h4 className="text-sm font-medium text-blue-900 mb-2">表示レイアウト:</h4>
             <div className="space-y-1 text-xs text-blue-800">
-              <p><strong>基本ルール:</strong> 上段の記録がない場合は上に詰めて表示</p>
+              <p><strong>表示順序:</strong> トレーニング → 体重・体脂肪率 → 学習</p>
               <p><strong>1段目:</strong> トレーニングアイコン（有酸素・筋力トレーニング）</p>
-              <p><strong>2段目:</strong> 体重・体脂肪率データ（優先）、または学習データ</p>
-              <p><strong>3段目:</strong> 学習データ（体重データがある場合のみ）</p>
-              <p><strong>トレーニング記録なし:</strong> 体重データが1段目、学習データが2段目</p>
+              <p><strong>2段目:</strong> 体重・体脂肪率データ（記録がある場合）</p>
+              <p><strong>3段目:</strong> 学習データ（記録がある場合）</p>
+              <p><strong>注意:</strong> 各データは記録がある場合のみ表示されます</p>
             </div>
           </div>
         </div>
