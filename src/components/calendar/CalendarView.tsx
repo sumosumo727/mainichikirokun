@@ -44,12 +44,12 @@ export const CalendarView: React.FC = () => {
     const hasTrainingData = hasRunning || hasStrength;
 
     return (
-      <div className="mt-1 w-full h-full flex flex-col justify-start gap-1" style={{ paddingLeft: '20px' }}>
+      <div className="mt-1 w-full h-full flex flex-col justify-start gap-1" style={{ paddingLeft: '30px' }}>
         {/* 1段目: トレーニングアイコン（データがある場合のみ） */}
         {hasTrainingData && (
           <div className="flex justify-start items-center gap-1 h-5">
             {hasStrength && (
-              <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center">
+              <div className="w-5 h-5 border-2 border-green-500 rounded-full flex items-center justify-center bg-transparent">
                 <img 
                   src="/icons/dumbbell.svg" 
                   alt="筋力トレーニング"
@@ -59,7 +59,7 @@ export const CalendarView: React.FC = () => {
               </div>
             )}
             {hasRunning && (
-              <div className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center">
+              <div className="w-5 h-5 border-2 border-blue-500 rounded-full flex items-center justify-center bg-transparent">
                 <img 
                   src="/icons/bicycle.svg" 
                   alt="有酸素"
@@ -75,7 +75,7 @@ export const CalendarView: React.FC = () => {
         {hasHealthData && (
           <div className="flex justify-start items-center h-5">
             <div className="flex items-center gap-1">
-              <div className="w-5 h-5 bg-purple-100 rounded-full flex items-center justify-center">
+              <div className="w-5 h-5 border-2 border-purple-500 rounded-full flex items-center justify-center bg-transparent">
                 <img 
                   src="/icons/scale.svg" 
                   alt="体重・体脂肪率"
@@ -96,7 +96,7 @@ export const CalendarView: React.FC = () => {
         {hasStudy && (
           <div className="flex justify-start items-center h-5">
             <div className="flex items-center gap-1">
-              <div className="w-5 h-5 bg-amber-100 rounded-full flex items-center justify-center">
+              <div className="w-5 h-5 border-2 border-amber-500 rounded-full flex items-center justify-center bg-transparent">
                 <img 
                   src="/icons/notebook.svg" 
                   alt="学習"
@@ -133,7 +133,7 @@ export const CalendarView: React.FC = () => {
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-4 text-sm text-gray-600">
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
+              <div className="w-6 h-6 border-2 border-blue-500 rounded-full flex items-center justify-center bg-transparent">
                 <img 
                   src="/icons/bicycle.svg" 
                   alt="有酸素"
@@ -143,7 +143,7 @@ export const CalendarView: React.FC = () => {
               <span>有酸素</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
+              <div className="w-6 h-6 border-2 border-green-500 rounded-full flex items-center justify-center bg-transparent">
                 <img 
                   src="/icons/dumbbell.svg" 
                   alt="筋力トレーニング"
@@ -153,7 +153,7 @@ export const CalendarView: React.FC = () => {
               <span>筋力トレーニング</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 bg-amber-100 rounded-full flex items-center justify-center">
+              <div className="w-6 h-6 border-2 border-amber-500 rounded-full flex items-center justify-center bg-transparent">
                 <img 
                   src="/icons/notebook.svg" 
                   alt="学習"
@@ -163,7 +163,7 @@ export const CalendarView: React.FC = () => {
               <span>学習</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center">
+              <div className="w-6 h-6 border-2 border-purple-500 rounded-full flex items-center justify-center bg-transparent">
                 <img 
                   src="/icons/scale.svg" 
                   alt="体重・体脂肪率"
@@ -200,7 +200,7 @@ export const CalendarView: React.FC = () => {
         <div className="space-y-2 text-sm text-gray-600">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
+              <div className="w-6 h-6 border-2 border-blue-500 rounded-full flex items-center justify-center bg-transparent">
                 <img 
                   src="/icons/bicycle.svg" 
                   alt="有酸素"
@@ -210,7 +210,7 @@ export const CalendarView: React.FC = () => {
               <span>有酸素運動を実施した日</span>
             </div>
             <div className="flex items-center gap-3">
-              <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
+              <div className="w-6 h-6 border-2 border-green-500 rounded-full flex items-center justify-center bg-transparent">
                 <img 
                   src="/icons/dumbbell.svg" 
                   alt="筋力トレーニング"
@@ -220,7 +220,7 @@ export const CalendarView: React.FC = () => {
               <span>筋力トレーニングを実施した日</span>
             </div>
             <div className="flex items-center gap-3">
-              <div className="w-6 h-6 bg-amber-100 rounded-full flex items-center justify-center">
+              <div className="w-6 h-6 border-2 border-amber-500 rounded-full flex items-center justify-center bg-transparent">
                 <img 
                   src="/icons/notebook.svg" 
                   alt="学習"
@@ -230,7 +230,7 @@ export const CalendarView: React.FC = () => {
               <span>学習を行った日</span>
             </div>
             <div className="flex items-center gap-3">
-              <div className="w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center">
+              <div className="w-6 h-6 border-2 border-purple-500 rounded-full flex items-center justify-center bg-transparent">
                 <img 
                   src="/icons/scale.svg" 
                   alt="体重・体脂肪率"
@@ -247,7 +247,8 @@ export const CalendarView: React.FC = () => {
               <p><strong>1段目:</strong> トレーニングアイコン（有酸素・筋力トレーニング）</p>
               <p><strong>2段目:</strong> 体重・体脂肪率データ（記録がある場合）</p>
               <p><strong>3段目:</strong> 学習データ（記録がある場合）</p>
-              <p><strong>配置:</strong> 各段の左端が統一され、左マージン20pxで整列</p>
+              <p><strong>配置:</strong> 各段の左端が統一され、左マージン30pxで整列</p>
+              <p><strong>スタイル:</strong> アイコンは透明背景で色付きの円枠で囲まれています</p>
               <p><strong>注意:</strong> 各データは記録がある場合のみ表示されます</p>
             </div>
           </div>

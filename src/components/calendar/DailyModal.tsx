@@ -268,7 +268,7 @@ export const DailyModal: React.FC = () => {
         {/* Training Section */}
         <div>
           <h4 className="text-lg font-medium text-gray-900 mb-3 flex items-center gap-2">
-            <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center">
+            <div className="w-5 h-5 border-2 border-green-500 rounded-full flex items-center justify-center bg-transparent">
               <img 
                 src="/icons/dumbbell.svg" 
                 alt="トレーニング"
@@ -286,7 +286,7 @@ export const DailyModal: React.FC = () => {
                 className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
               />
               <div className="flex items-center gap-2">
-                <div className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center">
+                <div className="w-5 h-5 border-2 border-blue-500 rounded-full flex items-center justify-center bg-transparent">
                   <img 
                     src="/icons/bicycle.svg" 
                     alt="有酸素"
@@ -305,7 +305,7 @@ export const DailyModal: React.FC = () => {
                 className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
               />
               <div className="flex items-center gap-2">
-                <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center">
+                <div className="w-5 h-5 border-2 border-green-500 rounded-full flex items-center justify-center bg-transparent">
                   <img 
                     src="/icons/dumbbell.svg" 
                     alt="筋力トレーニング"
@@ -321,7 +321,7 @@ export const DailyModal: React.FC = () => {
         {/* Health Metrics Section */}
         <div>
           <h4 className="text-lg font-medium text-gray-900 mb-3 flex items-center gap-2">
-            <div className="w-5 h-5 bg-purple-100 rounded-full flex items-center justify-center">
+            <div className="w-5 h-5 border-2 border-purple-500 rounded-full flex items-center justify-center bg-transparent">
               <img 
                 src="/icons/scale.svg" 
                 alt="体重・体脂肪率"
@@ -330,7 +330,7 @@ export const DailyModal: React.FC = () => {
             </div>
             体重・体脂肪率
           </h4>
-          <div className="grid grid-cols-1 m:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
               label="体重 (kg)"
               type="text"
@@ -356,7 +356,7 @@ export const DailyModal: React.FC = () => {
         {/* Study Section */}
         <div>
           <h4 className="text-lg font-medium text-gray-900 mb-3 flex items-center gap-2">
-            <div className="w-5 h-5 bg-amber-100 rounded-full flex items-center justify-center">
+            <div className="w-5 h-5 border-2 border-amber-500 rounded-full flex items-center justify-center bg-transparent">
               <img 
                 src="/icons/notebook.svg" 
                 alt="学習"
@@ -368,7 +368,7 @@ export const DailyModal: React.FC = () => {
           
           {availableBooks.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
-              <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-2">
+              <div className="w-12 h-12 border-2 border-amber-500 rounded-full flex items-center justify-center bg-transparent mx-auto mb-2">
                 <img 
                   src="/icons/notebook.svg" 
                   alt="学習"
