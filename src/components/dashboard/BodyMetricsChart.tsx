@@ -189,7 +189,9 @@ export const BodyMetricsChart: React.FC<BodyMetricsChartProps> = ({
               ]}
             />
             
-            <Legend />
+            <Legend 
+              formatter={(value) => value === 'weight' ? '体重' : '体脂肪率'}
+            />
             
             {hasWeightData && (
               <Line
