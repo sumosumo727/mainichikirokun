@@ -45,7 +45,7 @@ export const CalendarView: React.FC = () => {
 
     return (
       <div className="absolute inset-0 flex flex-col justify-start pt-4 sm:pt-6">
-        <div className="pl-2 sm:pl-[30px] space-y-0.5 sm:space-y-1">
+        <div className="pl-1 sm:pl-[30px] space-y-0.5 sm:space-y-1">
           {/* 1段目: トレーニングアイコン（データがある場合のみ） */}
           {hasTrainingData && (
             <div className="flex justify-start items-center gap-0.5 sm:gap-1 h-3 sm:h-5">
