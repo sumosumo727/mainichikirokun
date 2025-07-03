@@ -44,87 +44,89 @@ export const CalendarView: React.FC = () => {
     const hasTrainingData = hasRunning || hasStrength;
 
     return (
-      <div className="mt-1 w-full h-full flex flex-col justify-start gap-0.5 sm:gap-1 pl-2 sm:pl-100">
-        {/* 1段目: トレーニングアイコン（データがある場合のみ） */}
-        {hasTrainingData && (
-          <div className="flex justify-start items-center gap-0.5 sm:gap-1 h-3 sm:h-5">
-            {hasStrength && (
-              <div className="w-3 h-3 sm:w-5 sm:h-5 border border-green-500 sm:border-2 rounded-full flex items-center justify-center bg-transparent">
-                <img 
-                  src="/icons/dumbbell.svg" 
-                  alt="筋力トレーニング"
-                  className="w-1.5 h-1.5 sm:w-3 sm:h-3"
-                  title="筋力トレーニング"
-                />
-              </div>
-            )}
-            {hasRunning && (
-              <div className="w-3 h-3 sm:w-5 sm:h-5 border border-blue-500 sm:border-2 rounded-full flex items-center justify-center bg-transparent">
-                <img 
-                  src="/icons/bicycle.svg" 
-                  alt="有酸素"
-                  className="w-1.5 h-1.5 sm:w-3 sm:h-3"
-                  title="有酸素"
-                />
-              </div>
-            )}
-          </div>
-        )}
-        
-        {/* 2段目: 体重データ（スマホでは別行表示） */}
-        {hasHealthData && (
-          <div className="flex justify-start items-start h-auto">
-            <div className="flex items-start gap-0.5 sm:gap-1">
-              <div className="w-3 h-3 sm:w-5 sm:h-5 border border-purple-500 sm:border-2 rounded-full flex items-center justify-center bg-transparent flex-shrink-0">
-                <img 
-                  src="/icons/scale.svg" 
-                  alt="体重・体脂肪率"
-                  className="w-1.5 h-1.5 sm:w-3 sm:h-3"
-                  title="体重・体脂肪率"
-                />
-              </div>
-              <div className="flex flex-col text-purple-700 font-medium leading-tight">
-                {/* スマホでは縦並び、デスクトップでは横並び */}
-                <div className="block sm:hidden">
-                  {hasWeight && (
-                    <div className="text-[7px] whitespace-nowrap">
-                      {health?.weight}kg
-                    </div>
-                  )}
-                  {hasBodyFat && (
-                    <div className="text-[7px] whitespace-nowrap">
-                      {health?.bodyFatPercentage}%
-                    </div>
-                  )}
+      <div className="mt-1 w-full h-full flex flex-col justify-start gap-0.5 sm:gap-1">
+        <div className="pl-2 sm:pl-[400px] space-y-0.5 sm:space-y-1">
+          {/* 1段目: トレーニングアイコン（データがある場合のみ） */}
+          {hasTrainingData && (
+            <div className="flex justify-start items-center gap-0.5 sm:gap-1 h-3 sm:h-5">
+              {hasStrength && (
+                <div className="w-3 h-3 sm:w-5 sm:h-5 border border-green-500 sm:border-2 rounded-full flex items-center justify-center bg-transparent">
+                  <img 
+                    src="/icons/dumbbell.svg" 
+                    alt="筋力トレーニング"
+                    className="w-1.5 h-1.5 sm:w-3 sm:h-3"
+                    title="筋力トレーニング"
+                  />
                 </div>
-                <div className="hidden sm:block text-xs">
-                  {hasWeight && `${health?.weight}kg`}
-                  {hasWeight && hasBodyFat && '/'}
-                  {hasBodyFat && `${health?.bodyFatPercentage}%`}
+              )}
+              {hasRunning && (
+                <div className="w-3 h-3 sm:w-5 sm:h-5 border border-blue-500 sm:border-2 rounded-full flex items-center justify-center bg-transparent">
+                  <img 
+                    src="/icons/bicycle.svg" 
+                    alt="有酸素"
+                    className="w-1.5 h-1.5 sm:w-3 sm:h-3"
+                    title="有酸素"
+                  />
+                </div>
+              )}
+            </div>
+          )}
+          
+          {/* 2段目: 体重データ（スマホでは別行表示） */}
+          {hasHealthData && (
+            <div className="flex justify-start items-start h-auto">
+              <div className="flex items-start gap-0.5 sm:gap-1">
+                <div className="w-3 h-3 sm:w-5 sm:h-5 border border-purple-500 sm:border-2 rounded-full flex items-center justify-center bg-transparent flex-shrink-0">
+                  <img 
+                    src="/icons/scale.svg" 
+                    alt="体重・体脂肪率"
+                    className="w-1.5 h-1.5 sm:w-3 sm:h-3"
+                    title="体重・体脂肪率"
+                  />
+                </div>
+                <div className="flex flex-col text-purple-700 font-medium leading-tight">
+                  {/* スマホでは縦並び、デスクトップでは横並び */}
+                  <div className="block sm:hidden">
+                    {hasWeight && (
+                      <div className="text-[7px] whitespace-nowrap">
+                        {health?.weight}kg
+                      </div>
+                    )}
+                    {hasBodyFat && (
+                      <div className="text-[7px] whitespace-nowrap">
+                        {health?.bodyFatPercentage}%
+                      </div>
+                    )}
+                  </div>
+                  <div className="hidden sm:block text-xs">
+                    {hasWeight && `${health?.weight}kg`}
+                    {hasWeight && hasBodyFat && '/'}
+                    {hasBodyFat && `${health?.bodyFatPercentage}%`}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
-        
-        {/* 3段目: 学習データ */}
-        {hasStudy && (
-          <div className="flex justify-start items-center h-3 sm:h-5">
-            <div className="flex items-center gap-0.5 sm:gap-1">
-              <div className="w-3 h-3 sm:w-5 sm:h-5 border border-amber-500 sm:border-2 rounded-full flex items-center justify-center bg-transparent">
-                <img 
-                  src="/icons/notebook.svg" 
-                  alt="学習"
-                  className="w-1.5 h-1.5 sm:w-3 sm:h-3"
-                  title="学習"
-                />
+          )}
+          
+          {/* 3段目: 学習データ */}
+          {hasStudy && (
+            <div className="flex justify-start items-center h-3 sm:h-5">
+              <div className="flex items-center gap-0.5 sm:gap-1">
+                <div className="w-3 h-3 sm:w-5 sm:h-5 border border-amber-500 sm:border-2 rounded-full flex items-center justify-center bg-transparent">
+                  <img 
+                    src="/icons/notebook.svg" 
+                    alt="学習"
+                    className="w-1.5 h-1.5 sm:w-3 sm:h-3"
+                    title="学習"
+                  />
+                </div>
+                <span className="text-[7px] sm:text-xs text-amber-700 font-medium">
+                  {record?.studyProgress.length}章
+                </span>
               </div>
-              <span className="text-[7px] sm:text-xs text-amber-700 font-medium">
-                {record?.studyProgress.length}章
-              </span>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     );
   };
@@ -229,6 +231,7 @@ export const CalendarView: React.FC = () => {
           position: relative;
           font-size: 10px;
           line-height: 1.2;
+          overflow: hidden;
         }
         
         @media (min-width: 640px) {
