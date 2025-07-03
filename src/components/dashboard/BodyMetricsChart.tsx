@@ -15,6 +15,7 @@ interface BodyMetricsChartProps {
 
 interface MonthlyAverageData {
   month: string;
+  shortMonth: string; // グラフ用の短縮表示
   averageWeight?: number;
   averageBodyFat?: number;
   dataCount: number;
@@ -52,6 +53,7 @@ export const BodyMetricsChart: React.FC<BodyMetricsChartProps> = ({
       if (monthData.length === 0) {
         return {
           month: format(month, 'yyyy年MM月'),
+          shortMonth: format(month, 'MM月'),
           dataCount: 0
         };
       }
@@ -69,14 +71,35 @@ export const BodyMetricsChart: React.FC<BodyMetricsChartProps> = ({
       
       return {
         month: format(month, 'yyyy年MM月'),
+        shortMonth: format(month, 'MM月'),
         averageWeight: averageWeight ? Math.round(averageWeight * 10) / 10 : undefined,
         averageBodyFat: averageBodyFat ? Math.round(averageBodyFat * 10) / 10 : undefined,
         dataCount: monthData.length
       };
-    }).reverse(); // 最新月を上に表示
+    });
   };
 
   const monthlyAverages = calculateMonthlyAverages();
+  const monthlyAveragesReversed = [...monthlyAverages].reverse(); // 表示用（最新月を上に）
+
+  // 月別平均グラフ用のデータを準備
+  const monthlyChartData = monthlyAverages.filter(data => 
+    data.averageWeight !== undefined || data.averageBodyFat !== undefined
+  );
+
+  // 月別平均グラフのY軸範囲を計算
+  const monthlyWeights = monthlyChartData.filter(d => d.averageWeight !== undefined).map(d => d.averageWeight!);
+  const monthlyBodyFats = monthlyChartData.filter(d => d.averageBodyFat !== undefined).map(d => d.averageBodyFat!);
+
+  const monthlyWeightDomain = monthlyWeights.length > 0 ? [
+    Math.max(0, Math.min(...monthlyWeights) - 2),
+    Math.max(...monthlyWeights) + 2
+  ] : undefined;
+
+  const monthlyBodyFatDomain = monthlyBodyFats.length > 0 ? [
+    Math.max(0, Math.min(...monthlyBodyFats) - 2),
+    Math.min(100, Math.max(...monthlyBodyFats) + 2)
+  ] : undefined;
 
   // 最新データと前回データを取得して差異を計算
   const getMetricsTrend = () => {
@@ -204,40 +227,136 @@ export const BodyMetricsChart: React.FC<BodyMetricsChartProps> = ({
       </div>
 
       {showMonthlyAverage ? (
-        // 月別平均表示
+        // 月別平均表示（左右分割）
         <div className="space-y-4">
           <div className="bg-blue-50 p-4 rounded-lg">
             <h4 className="text-sm font-medium text-blue-900 mb-3">月別平均データ（過去12ヶ月）</h4>
-            <div className="max-h-64 overflow-y-auto">
-              <div className="grid grid-cols-1 gap-2">
-                {monthlyAverages.map((monthData, index) => (
-                  <div key={index} className="flex items-center justify-between p-2 bg-white rounded border">
-                    <div className="font-medium text-gray-700">
-                      {monthData.month}
-                    </div>
-                    <div className="flex items-center gap-4 text-sm">
-                      {monthData.averageWeight !== undefined ? (
-                        <div className="flex items-center gap-1">
-                          <span className="text-purple-600">体重:</span>
-                          <span className="font-medium">{monthData.averageWeight}kg</span>
+            
+            {/* 左右分割レイアウト */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* 左側：データ一覧 */}
+              <div className="space-y-2">
+                <h5 className="text-xs font-medium text-blue-800 mb-2">月別データ一覧</h5>
+                <div className="max-h-64 overflow-y-auto">
+                  <div className="grid grid-cols-1 gap-2">
+                    {monthlyAveragesReversed.map((monthData, index) => (
+                      <div key={index} className="flex items-center justify-between p-2 bg-white rounded border text-xs">
+                        <div className="font-medium text-gray-700 min-w-0 flex-shrink-0">
+                          {monthData.month}
                         </div>
-                      ) : (
-                        <div className="text-gray-400">体重: -</div>
-                      )}
-                      {monthData.averageBodyFat !== undefined ? (
-                        <div className="flex items-center gap-1">
-                          <span className="text-amber-600">体脂肪率:</span>
-                          <span className="font-medium">{monthData.averageBodyFat}%</span>
+                        <div className="flex items-center gap-3 text-xs">
+                          {monthData.averageWeight !== undefined ? (
+                            <div className="flex items-center gap-1">
+                              <span className="text-purple-600">体重:</span>
+                              <span className="font-medium">{monthData.averageWeight}kg</span>
+                            </div>
+                          ) : (
+                            <div className="text-gray-400">体重: -</div>
+                          )}
+                          {monthData.averageBodyFat !== undefined ? (
+                            <div className="flex items-center gap-1">
+                              <span className="text-amber-600">体脂肪:</span>
+                              <span className="font-medium">{monthData.averageBodyFat}%</span>
+                            </div>
+                          ) : (
+                            <div className="text-gray-400">体脂肪: -</div>
+                          )}
+                          <div className="text-xs text-gray-500">
+                            ({monthData.dataCount}回)
+                          </div>
                         </div>
-                      ) : (
-                        <div className="text-gray-400">体脂肪率: -</div>
-                      )}
-                      <div className="text-xs text-gray-500">
-                        ({monthData.dataCount}回記録)
                       </div>
-                    </div>
+                    ))}
                   </div>
-                ))}
+                </div>
+              </div>
+
+              {/* 右側：折れ線グラフ */}
+              <div className="space-y-2">
+                <h5 className="text-xs font-medium text-blue-800 mb-2">月別平均推移グラフ</h5>
+                <div className="h-64 bg-white rounded border">
+                  {monthlyChartData.length > 0 ? (
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart data={monthlyChartData} margin={{ top: 10, right: 30, left: 20, bottom: 5 }}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis 
+                          dataKey="shortMonth" 
+                          tick={{ fontSize: 10 }}
+                          interval={0}
+                          angle={-45}
+                          textAnchor="end"
+                          height={60}
+                        />
+                        
+                        {/* 体重用のY軸 */}
+                        {monthlyWeights.length > 0 && (
+                          <YAxis 
+                            yAxisId="weight"
+                            orientation="left"
+                            domain={monthlyWeightDomain}
+                            tick={{ fontSize: 10 }}
+                            label={{ value: '体重(kg)', angle: -90, position: 'insideLeft', style: { fontSize: '10px' } }}
+                          />
+                        )}
+                        
+                        {/* 体脂肪率用のY軸 */}
+                        {monthlyBodyFats.length > 0 && (
+                          <YAxis 
+                            yAxisId="bodyFat"
+                            orientation="right"
+                            domain={monthlyBodyFatDomain}
+                            tick={{ fontSize: 10 }}
+                            label={{ value: '体脂肪率(%)', angle: 90, position: 'insideRight', style: { fontSize: '10px' } }}
+                          />
+                        )}
+                        
+                        <Tooltip 
+                          labelFormatter={(label) => `${label}`}
+                          formatter={(value, name) => [
+                            value ? `${value}${name === 'averageWeight' ? 'kg' : '%'}` : 'データなし',
+                            name === 'averageWeight' ? '平均体重' : '平均体脂肪率'
+                          ]}
+                          contentStyle={{ fontSize: '12px' }}
+                        />
+                        
+                        <Legend 
+                          formatter={(value) => value === 'averageWeight' ? '平均体重' : '平均体脂肪率'}
+                          wrapperStyle={{ fontSize: '10px' }}
+                        />
+                        
+                        {monthlyWeights.length > 0 && (
+                          <Line
+                            yAxisId="weight"
+                            type="monotone"
+                            dataKey="averageWeight"
+                            stroke="#8b5cf6"
+                            strokeWidth={2}
+                            dot={{ fill: '#8b5cf6', strokeWidth: 2, r: 3 }}
+                            connectNulls={false}
+                            name="averageWeight"
+                          />
+                        )}
+                        
+                        {monthlyBodyFats.length > 0 && (
+                          <Line
+                            yAxisId="bodyFat"
+                            type="monotone"
+                            dataKey="averageBodyFat"
+                            stroke="#f59e0b"
+                            strokeWidth={2}
+                            dot={{ fill: '#f59e0b', strokeWidth: 2, r: 3 }}
+                            connectNulls={false}
+                            name="averageBodyFat"
+                          />
+                        )}
+                      </LineChart>
+                    </ResponsiveContainer>
+                  ) : (
+                    <div className="h-full flex items-center justify-center text-gray-500 text-sm">
+                      <p>グラフ表示用のデータがありません</p>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
