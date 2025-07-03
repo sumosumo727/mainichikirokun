@@ -384,8 +384,8 @@ export const DailyModal: React.FC = () => {
                 </p>
               </div>
 
-              {/* Study Section */}
-              <div>
+              {/* Study Section - 余白を調整 */}
+              <div className="pb-2 sm:pb-0">
                 <h4 className="text-sm sm:text-lg font-medium text-gray-900 mb-2 sm:mb-3 flex items-center gap-2">
                   <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-amber-500 rounded-full flex items-center justify-center bg-transparent">
                     <img 
@@ -398,7 +398,7 @@ export const DailyModal: React.FC = () => {
                 </h4>
                 
                 {availableBooks.length === 0 ? (
-                  <div className="text-center py-6 sm:py-8 text-gray-500">
+                  <div className="text-center py-4 sm:py-8 text-gray-500">
                     <div className="w-8 h-8 sm:w-12 sm:h-12 border-2 border-amber-500 rounded-full flex items-center justify-center bg-transparent mx-auto mb-2">
                       <img 
                         src="/icons/notebook.svg" 
@@ -410,7 +410,7 @@ export const DailyModal: React.FC = () => {
                     <p className="text-xs sm:text-sm">すべての書籍が完了しているか、書籍を追加してください。</p>
                   </div>
                 ) : (
-                  <div className="space-y-3 sm:space-y-4">
+                  <div className="space-y-2 sm:space-y-4">
                     {availableBooks.map(book => {
                       const selectedBook = selectedBooks.find(sb => sb.bookId === book.id);
                       const isBookSelected = !!selectedBook;
@@ -418,7 +418,7 @@ export const DailyModal: React.FC = () => {
                       const completedChaptersCount = book.chapters.filter((chapter: any) => selectedChapters.has(chapter.id)).length;
                       
                       return (
-                        <div key={book.id} className="border border-gray-200 rounded-lg p-3 sm:p-4 hover:border-gray-300 transition-colors">
+                        <div key={book.id} className="border border-gray-200 rounded-lg p-2 sm:p-4 hover:border-gray-300 transition-colors">
                           <div className="flex items-center justify-between mb-2 sm:mb-3">
                             <label className="flex items-center gap-2 sm:gap-3 cursor-pointer">
                               <input
@@ -438,14 +438,14 @@ export const DailyModal: React.FC = () => {
                           </div>
                           
                           {isBookSelected && (
-                            <div className="ml-4 sm:ml-7 space-y-1 sm:space-y-2">
+                            <div className="ml-3 sm:ml-7 space-y-1 sm:space-y-2">
                               <p className="text-xs sm:text-sm text-gray-600 mb-1 sm:mb-2">章を選択:</p>
                               {availableChapters.length === 0 ? (
                                 <p className="text-xs sm:text-sm text-gray-500 italic">選択可能な章がありません</p>
                               ) : (
-                                <div className="grid grid-cols-1 gap-1 sm:gap-2 max-h-24 sm:max-h-32 overflow-y-auto">
+                                <div className="grid grid-cols-1 gap-1 sm:gap-2 max-h-20 sm:max-h-32 overflow-y-auto">
                                   {availableChapters.map(chapter => (
-                                    <label key={chapter.id} className="flex items-center gap-1 sm:gap-2 cursor-pointer p-1.5 sm:p-2 rounded hover:bg-gray-50 transition-colors">
+                                    <label key={chapter.id} className="flex items-center gap-1 sm:gap-2 cursor-pointer p-1 sm:p-2 rounded hover:bg-gray-50 transition-colors">
                                       <input
                                         type="checkbox"
                                         checked={selectedBook.chapterIds.includes(chapter.id)}
