@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { format } from 'date-fns';
-import { Save, CheckCircle } from 'lucide-react';
-import { Modal } from '../ui/Modal';
+import { Save, CheckCircle, X } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import { useAppStore } from '../../store/appStore';
@@ -246,7 +245,7 @@ export const DailyModal: React.FC = () => {
     });
   };
 
-  if (!selectedDate) return null;
+  if (!selectedDate || !showDailyModal) return null;
 
   // 選択可能な書籍をフィルタリング（完了していない書籍のみ）
   const availableBooks = books.filter(book => {
@@ -258,204 +257,242 @@ export const DailyModal: React.FC = () => {
   });
 
   return (
-    <Modal
-      isOpen={showDailyModal}
-      onClose={handleModalClose}
-      title={`日次記録 - ${format(selectedDate, 'yyyy年M月d日')}`}
-      size="lg"
-    >
-      <div className="space-y-6">
-        {/* Training Section */}
-        <div>
-          <h4 className="text-lg font-medium text-gray-900 mb-3 flex items-center gap-2">
-            <div className="w-5 h-5 border-2 border-green-500 rounded-full flex items-center justify-center bg-transparent">
-              <img 
-                src="/icons/dumbbell.svg" 
-                alt="トレーニング"
-                className="w-3 h-3"
-              />
+    <div className="fixed inset-0 z-50 overflow-hidden">
+      <div className="flex min-h-screen items-end sm:items-center justify-center">
+        <div 
+          className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+          onClick={handleModalClose}
+        />
+        
+        {/* モーダルコンテナ - スマホでは画面全体、デスクトップでは通常サイズ */}
+        <div className="relative w-full h-full sm:h-auto sm:max-w-2xl sm:max-h-[90vh] transform overflow-hidden bg-white text-left shadow-xl transition-all sm:rounded-lg">
+          {/* ヘッダー */}
+          <div className="sticky top-0 z-10 bg-white border-b border-gray-200 px-4 py-3 sm:px-6 sm:py-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-base sm:text-lg font-medium leading-6 text-gray-900">
+                日次記録 - {format(selectedDate, 'yyyy年M月d日')}
+              </h3>
+              <button
+                type="button"
+                className="rounded-md bg-white text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 p-1"
+                onClick={handleModalClose}
+              >
+                <X className="h-5 w-5 sm:h-6 sm:w-6" />
+              </button>
             </div>
-            トレーニング
-          </h4>
-          <div className="space-y-3">
-            <label className="flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
-              <input
-                type="checkbox"
-                checked={training.running}
-                onChange={() => handleTrainingChange('running')}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-              />
-              <div className="flex items-center gap-2">
-                <div className="w-5 h-5 border-2 border-blue-500 rounded-full flex items-center justify-center bg-transparent">
-                  <img 
-                    src="/icons/bicycle.svg" 
-                    alt="有酸素"
-                    className="w-3 h-3"
-                  />
-                </div>
-                <span className="text-sm font-medium">有酸素</span>
-              </div>
-            </label>
-            
-            <label className="flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
-              <input
-                type="checkbox"
-                checked={training.strength}
-                onChange={() => handleTrainingChange('strength')}
-                className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
-              />
-              <div className="flex items-center gap-2">
-                <div className="w-5 h-5 border-2 border-green-500 rounded-full flex items-center justify-center bg-transparent">
-                  <img 
-                    src="/icons/dumbbell.svg" 
-                    alt="筋力トレーニング"
-                    className="w-3 h-3"
-                  />
-                </div>
-                <span className="text-sm font-medium">筋力トレーニング</span>
-              </div>
-            </label>
           </div>
-        </div>
 
-        {/* Health Metrics Section */}
-        <div>
-          <h4 className="text-lg font-medium text-gray-900 mb-3 flex items-center gap-2">
-            <div className="w-5 h-5 border-2 border-purple-500 rounded-full flex items-center justify-center bg-transparent">
-              <img 
-                src="/icons/scale.svg" 
-                alt="体重・体脂肪率"
-                className="w-3 h-3"
-              />
-            </div>
-            体重・体脂肪率
-          </h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Input
-              label="体重 (kg)"
-              type="text"
-              value={healthMetrics.weight}
-              onChange={(e) => handleHealthMetricsChange('weight', e.target.value)}
-              placeholder="例: 70.5"
-              className="text-center"
-            />
-            <Input
-              label="体脂肪率 (%)"
-              type="text"
-              value={healthMetrics.bodyFatPercentage}
-              onChange={(e) => handleHealthMetricsChange('bodyFatPercentage', e.target.value)}
-              placeholder="例: 15.2"
-              className="text-center"
-            />
-          </div>
-          <p className="text-xs text-gray-500 mt-2">
-            小数点1桁まで入力可能です。記録しない項目は空欄のままにしてください。
-          </p>
-        </div>
-
-        {/* Study Section */}
-        <div>
-          <h4 className="text-lg font-medium text-gray-900 mb-3 flex items-center gap-2">
-            <div className="w-5 h-5 border-2 border-amber-500 rounded-full flex items-center justify-center bg-transparent">
-              <img 
-                src="/icons/notebook.svg" 
-                alt="学習"
-                className="w-3 h-3"
-              />
-            </div>
-            学習進捗
-          </h4>
-          
-          {availableBooks.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              <div className="w-12 h-12 border-2 border-amber-500 rounded-full flex items-center justify-center bg-transparent mx-auto mb-2">
-                <img 
-                  src="/icons/notebook.svg" 
-                  alt="学習"
-                  className="w-6 h-6 opacity-30"
-                />
-              </div>
-              <p>選択可能な書籍がありません</p>
-              <p className="text-sm">すべての書籍が完了しているか、書籍を追加してください。</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {availableBooks.map(book => {
-                const selectedBook = selectedBooks.find(sb => sb.bookId === book.id);
-                const isBookSelected = !!selectedBook;
-                const availableChapters = getAvailableChapters(book);
-                const completedChaptersCount = book.chapters.filter((chapter: any) => selectedChapters.has(chapter.id)).length;
-                
-                return (
-                  <div key={book.id} className="border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors">
-                    <div className="flex items-center justify-between mb-3">
-                      <label className="flex items-center gap-3 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={isBookSelected}
-                          onChange={() => handleBookSelect(book.id)}
-                          className="h-4 w-4 text-amber-600 focus:ring-amber-500 border-gray-300 rounded"
-                        />
-                        <span className="font-medium text-gray-900">{book.name}</span>
-                      </label>
-                      <div className="flex items-center gap-2 text-sm text-gray-500">
-                        <span>{completedChaptersCount}/{book.chapters.length} 章完了</span>
-                        {completedChaptersCount === book.chapters.length && (
-                          <CheckCircle className="h-4 w-4 text-green-500" />
-                        )}
-                      </div>
-                    </div>
-                    
-                    {isBookSelected && (
-                      <div className="ml-7 space-y-2">
-                        <p className="text-sm text-gray-600 mb-2">章を選択:</p>
-                        {availableChapters.length === 0 ? (
-                          <p className="text-sm text-gray-500 italic">選択可能な章がありません</p>
-                        ) : (
-                          <div className="grid grid-cols-1 gap-2 max-h-32 overflow-y-auto">
-                            {availableChapters.map(chapter => (
-                              <label key={chapter.id} className="flex items-center gap-2 cursor-pointer p-2 rounded hover:bg-gray-50 transition-colors">
-                                <input
-                                  type="checkbox"
-                                  checked={selectedBook.chapterIds.includes(chapter.id)}
-                                  onChange={() => handleChapterSelect(book.id, chapter.id)}
-                                  className="h-3 w-3 text-amber-600 focus:ring-amber-500 border-gray-300 rounded"
-                                />
-                                <span className="text-sm text-gray-700">{chapter.name}</span>
-                                {selectedChapters.has(chapter.id) && !selectedBook.chapterIds.includes(chapter.id) && (
-                                  <CheckCircle className="h-3 w-3 text-green-500 ml-auto" title="他の日に完了済み" />
-                                )}
-                              </label>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    )}
+          {/* スクロール可能なコンテンツエリア */}
+          <div className="flex-1 overflow-y-auto px-4 py-4 sm:px-6 sm:py-6" style={{ 
+            height: 'calc(100vh - 140px)', // ヘッダー(60px) + フッター(80px) を除いた高さ
+            maxHeight: 'calc(100vh - 140px)'
+          }}>
+            <div className="space-y-4 sm:space-y-6">
+              {/* Training Section */}
+              <div>
+                <h4 className="text-sm sm:text-lg font-medium text-gray-900 mb-2 sm:mb-3 flex items-center gap-2">
+                  <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-green-500 rounded-full flex items-center justify-center bg-transparent">
+                    <img 
+                      src="/icons/dumbbell.svg" 
+                      alt="トレーニング"
+                      className="w-2 h-2 sm:w-3 sm:h-3"
+                    />
                   </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
+                  トレーニング
+                </h4>
+                <div className="space-y-2 sm:space-y-3">
+                  <label className="flex items-center gap-2 sm:gap-3 cursor-pointer p-2 sm:p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                    <input
+                      type="checkbox"
+                      checked={training.running}
+                      onChange={() => handleTrainingChange('running')}
+                      className="h-3 w-3 sm:h-4 sm:w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    />
+                    <div className="flex items-center gap-1 sm:gap-2">
+                      <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-blue-500 rounded-full flex items-center justify-center bg-transparent">
+                        <img 
+                          src="/icons/bicycle.svg" 
+                          alt="有酸素"
+                          className="w-2 h-2 sm:w-3 sm:h-3"
+                        />
+                      </div>
+                      <span className="text-xs sm:text-sm font-medium">有酸素</span>
+                    </div>
+                  </label>
+                  
+                  <label className="flex items-center gap-2 sm:gap-3 cursor-pointer p-2 sm:p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                    <input
+                      type="checkbox"
+                      checked={training.strength}
+                      onChange={() => handleTrainingChange('strength')}
+                      className="h-3 w-3 sm:h-4 sm:w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                    />
+                    <div className="flex items-center gap-1 sm:gap-2">
+                      <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-green-500 rounded-full flex items-center justify-center bg-transparent">
+                        <img 
+                          src="/icons/dumbbell.svg" 
+                          alt="筋力トレーニング"
+                          className="w-2 h-2 sm:w-3 sm:h-3"
+                        />
+                      </div>
+                      <span className="text-xs sm:text-sm font-medium">筋力トレーニング</span>
+                    </div>
+                  </label>
+                </div>
+              </div>
 
-        {/* Actions */}
-        <div className="flex justify-end gap-3 pt-4 border-t">
-          <Button
-            variant="outline"
-            onClick={handleModalClose}
-          >
-            キャンセル
-          </Button>
-          <Button 
-            onClick={handleSave} 
-            className="flex items-center gap-2"
-            disabled={isLoading}
-          >
-            <Save className="h-4 w-4" />
-            {isLoading ? '保存中...' : '記録を保存'}
-          </Button>
+              {/* Health Metrics Section */}
+              <div>
+                <h4 className="text-sm sm:text-lg font-medium text-gray-900 mb-2 sm:mb-3 flex items-center gap-2">
+                  <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-purple-500 rounded-full flex items-center justify-center bg-transparent">
+                    <img 
+                      src="/icons/scale.svg" 
+                      alt="体重・体脂肪率"
+                      className="w-2 h-2 sm:w-3 sm:h-3"
+                    />
+                  </div>
+                  体重・体脂肪率
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                  <div className="space-y-1">
+                    <label className="block text-xs sm:text-sm font-medium text-gray-700">
+                      体重 (kg)
+                    </label>
+                    <input
+                      type="text"
+                      value={healthMetrics.weight}
+                      onChange={(e) => handleHealthMetricsChange('weight', e.target.value)}
+                      placeholder="例: 70.5"
+                      className="w-full px-2 py-1.5 sm:px-3 sm:py-2 text-xs sm:text-base text-center border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-200"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="block text-xs sm:text-sm font-medium text-gray-700">
+                      体脂肪率 (%)
+                    </label>
+                    <input
+                      type="text"
+                      value={healthMetrics.bodyFatPercentage}
+                      onChange={(e) => handleHealthMetricsChange('bodyFatPercentage', e.target.value)}
+                      placeholder="例: 15.2"
+                      className="w-full px-2 py-1.5 sm:px-3 sm:py-2 text-xs sm:text-base text-center border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-200"
+                    />
+                  </div>
+                </div>
+                <p className="text-xs text-gray-500 mt-1 sm:mt-2">
+                  小数点1桁まで入力可能です。記録しない項目は空欄のままにしてください。
+                </p>
+              </div>
+
+              {/* Study Section */}
+              <div>
+                <h4 className="text-sm sm:text-lg font-medium text-gray-900 mb-2 sm:mb-3 flex items-center gap-2">
+                  <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-amber-500 rounded-full flex items-center justify-center bg-transparent">
+                    <img 
+                      src="/icons/notebook.svg" 
+                      alt="学習"
+                      className="w-2 h-2 sm:w-3 sm:h-3"
+                    />
+                  </div>
+                  学習進捗
+                </h4>
+                
+                {availableBooks.length === 0 ? (
+                  <div className="text-center py-6 sm:py-8 text-gray-500">
+                    <div className="w-8 h-8 sm:w-12 sm:h-12 border-2 border-amber-500 rounded-full flex items-center justify-center bg-transparent mx-auto mb-2">
+                      <img 
+                        src="/icons/notebook.svg" 
+                        alt="学習"
+                        className="w-4 h-4 sm:w-6 sm:h-6 opacity-30"
+                      />
+                    </div>
+                    <p className="text-xs sm:text-base">選択可能な書籍がありません</p>
+                    <p className="text-xs sm:text-sm">すべての書籍が完了しているか、書籍を追加してください。</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3 sm:space-y-4">
+                    {availableBooks.map(book => {
+                      const selectedBook = selectedBooks.find(sb => sb.bookId === book.id);
+                      const isBookSelected = !!selectedBook;
+                      const availableChapters = getAvailableChapters(book);
+                      const completedChaptersCount = book.chapters.filter((chapter: any) => selectedChapters.has(chapter.id)).length;
+                      
+                      return (
+                        <div key={book.id} className="border border-gray-200 rounded-lg p-3 sm:p-4 hover:border-gray-300 transition-colors">
+                          <div className="flex items-center justify-between mb-2 sm:mb-3">
+                            <label className="flex items-center gap-2 sm:gap-3 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={isBookSelected}
+                                onChange={() => handleBookSelect(book.id)}
+                                className="h-3 w-3 sm:h-4 sm:w-4 text-amber-600 focus:ring-amber-500 border-gray-300 rounded"
+                              />
+                              <span className="text-xs sm:text-base font-medium text-gray-900">{book.name}</span>
+                            </label>
+                            <div className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm text-gray-500">
+                              <span>{completedChaptersCount}/{book.chapters.length} 章完了</span>
+                              {completedChaptersCount === book.chapters.length && (
+                                <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 text-green-500" />
+                              )}
+                            </div>
+                          </div>
+                          
+                          {isBookSelected && (
+                            <div className="ml-4 sm:ml-7 space-y-1 sm:space-y-2">
+                              <p className="text-xs sm:text-sm text-gray-600 mb-1 sm:mb-2">章を選択:</p>
+                              {availableChapters.length === 0 ? (
+                                <p className="text-xs sm:text-sm text-gray-500 italic">選択可能な章がありません</p>
+                              ) : (
+                                <div className="grid grid-cols-1 gap-1 sm:gap-2 max-h-24 sm:max-h-32 overflow-y-auto">
+                                  {availableChapters.map(chapter => (
+                                    <label key={chapter.id} className="flex items-center gap-1 sm:gap-2 cursor-pointer p-1.5 sm:p-2 rounded hover:bg-gray-50 transition-colors">
+                                      <input
+                                        type="checkbox"
+                                        checked={selectedBook.chapterIds.includes(chapter.id)}
+                                        onChange={() => handleChapterSelect(book.id, chapter.id)}
+                                        className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-amber-600 focus:ring-amber-500 border-gray-300 rounded"
+                                      />
+                                      <span className="text-xs sm:text-sm text-gray-700">{chapter.name}</span>
+                                      {selectedChapters.has(chapter.id) && !selectedBook.chapterIds.includes(chapter.id) && (
+                                        <CheckCircle className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-green-500 ml-auto" title="他の日に完了済み" />
+                                      )}
+                                    </label>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* フッター（固定） */}
+          <div className="sticky bottom-0 bg-white border-t border-gray-200 px-4 py-3 sm:px-6 sm:py-4">
+            <div className="flex justify-end gap-2 sm:gap-3">
+              <Button
+                variant="outline"
+                onClick={handleModalClose}
+                className="text-xs sm:text-base px-3 py-1.5 sm:px-4 sm:py-2"
+              >
+                キャンセル
+              </Button>
+              <Button 
+                onClick={handleSave} 
+                className="flex items-center gap-1 sm:gap-2 text-xs sm:text-base px-3 py-1.5 sm:px-4 sm:py-2"
+                disabled={isLoading}
+              >
+                <Save className="h-3 w-3 sm:h-4 sm:w-4" />
+                {isLoading ? '保存中...' : '記録を保存'}
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
-    </Modal>
+    </div>
   );
 };
