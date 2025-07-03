@@ -102,10 +102,8 @@ export const DashboardPage: React.FC = () => {
     switch (currentView) {
       case 'calendar':
         return (
-          <div className="space-y-6 h-full flex flex-col">
-            <div className="flex-1 min-h-0">
-              <CalendarView />
-            </div>
+          <div className="space-y-6">
+            <CalendarView />
             <DailyModal />
           </div>
         );
@@ -186,9 +184,9 @@ export const DashboardPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gray-50">
       <Header currentView={currentView} onViewChange={setCurrentView} />
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-8 min-h-0">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {renderContent()}
       </main>
     </div>
