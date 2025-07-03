@@ -776,13 +776,17 @@ export const useAppStore = create<AppState>()((set, get) => ({
 
       const runningDays = monthRecords.filter((r) => r.training.running).length;
       const strengthDays = monthRecords.filter((r) => r.training.strength).length;
-      const studyDays = monthRecords.filter((r) => r.studyProgress.length > 0).length;
+      
+      // 学習進捗は章数で計算
+      const studyChapters = monthRecords.reduce((total, record) => {
+        return total + record.studyProgress.length;
+      }, 0);
 
       chartData.push({
         month: format(targetMonth, 'yyyy/MM'),
         running: runningDays,
         strength: strengthDays,
-        study: studyDays,
+        study: studyChapters,
       });
     }
 
@@ -829,20 +833,16 @@ export const useAppStore = create<AppState>()((set, get) => ({
     // 期間に応じて開始日と終了日を設定
     switch (bodyMetricsPeriod) {
       case 'week':
-        startDate = startOfWeek(subWeeks(now, 4)); // 過去4週間
-        endDate = endOfWeek(now);
+        startDate = subWeeks(now, 2); // 直近2週間
+        endDate = now;
         break;
       case 'month':
-        startDate = startOfMonth(subMonths(now, 6)); // 過去6ヶ月
-        endDate = endOfMonth(now);
-        break;
-      case 'year':
-        startDate = startOfYear(subYears(now, 1)); // 過去1年
-        endDate = endOfYear(now);
+        startDate = subMonths(now, 1); // 直近1ヶ月
+        endDate = now;
         break;
       default:
-        startDate = startOfMonth(subMonths(now, 6));
-        endDate = endOfMonth(now);
+        startDate = subMonths(now, 1);
+        endDate = now;
     }
 
     // 期間内のデータをフィルタリング

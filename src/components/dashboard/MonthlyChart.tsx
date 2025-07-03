@@ -39,8 +39,8 @@ export const MonthlyChart: React.FC<MonthlyChartProps> = ({ data, trainingDistri
 
   // トレーニング比率のデータを準備
   const pieData = [
-    { name: '有酸素運動', value: trainingDistribution.running },
-    { name: '筋力トレーニング', value: trainingDistribution.strength },
+    { name: '有酸素', value: trainingDistribution.running },
+    { name: '筋トレ', value: trainingDistribution.strength },
   ].filter(item => item.value > 0);
 
   return (
@@ -69,13 +69,13 @@ export const MonthlyChart: React.FC<MonthlyChartProps> = ({ data, trainingDistri
                 formatter={(value, name) => [
                   name === 'running' ? `${value}回` : 
                   name === 'strength' ? `${value}回` : `${value}章`,
-                  name === 'running' ? '有酸素運動' : 
-                  name === 'strength' ? '筋力トレーニング' : '学習進捗'
+                  name === 'running' ? '有酸素' : 
+                  name === 'strength' ? '筋トレ' : '学習'
                 ]}
               />
-              <Bar dataKey="running" fill="#3b82f6" name="有酸素運動" />
-              <Bar dataKey="strength" fill="#10b981" name="筋力トレーニング" />
-              <Bar dataKey="study" fill="#f59e0b" name="学習進捗" />
+              <Bar dataKey="running" fill="#3b82f6" name="有酸素" />
+              <Bar dataKey="strength" fill="#10b981" name="筋トレ" />
+              <Bar dataKey="study" fill="#f59e0b" name="学習" />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -118,14 +118,14 @@ export const MonthlyChart: React.FC<MonthlyChartProps> = ({ data, trainingDistri
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 bg-blue-600 rounded-full"></div>
-                  <span>有酸素運動</span>
+                  <span>有酸素</span>
                 </div>
                 <span className="font-medium">{trainingDistribution.running}%</span>
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 bg-green-600 rounded-full"></div>
-                  <span>筋力トレーニング</span>
+                  <span>筋トレ</span>
                 </div>
                 <span className="font-medium">{trainingDistribution.strength}%</span>
               </div>

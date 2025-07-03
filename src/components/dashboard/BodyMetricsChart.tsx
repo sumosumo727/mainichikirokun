@@ -20,6 +20,40 @@ export const BodyMetricsChart: React.FC<BodyMetricsChartProps> = ({
   const hasWeightData = data.some(d => d.weight !== undefined && d.weight !== null);
   const hasBodyFatData = data.some(d => d.bodyFatPercentage !== undefined && d.bodyFatPercentage !== null);
 
+  // 最新データと前回データを取得して差異を計算
+  const getMetricsTrend = () => {
+    if (data.length < 2) return null;
+
+    const sortedData = [...data].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    const latest = sortedData[sortedData.length - 1];
+    const previous = sortedData[sortedData.length - 2];
+
+    const weightChange = latest.weight && previous.weight 
+      ? {
+          value: latest.weight - previous.weight,
+          percentage: ((latest.weight - previous.weight) / previous.weight) * 100,
+          isPositive: latest.weight >= previous.weight
+        }
+      : null;
+
+    const bodyFatChange = latest.bodyFatPercentage && previous.bodyFatPercentage
+      ? {
+          value: latest.bodyFatPercentage - previous.bodyFatPercentage,
+          percentage: ((latest.bodyFatPercentage - previous.bodyFatPercentage) / previous.bodyFatPercentage) * 100,
+          isPositive: latest.bodyFatPercentage >= previous.bodyFatPercentage
+        }
+      : null;
+
+    return {
+      latest,
+      previous,
+      weightChange,
+      bodyFatChange
+    };
+  };
+
+  const trend = getMetricsTrend();
+
   if (!data || data.length === 0 || (!hasWeightData && !hasBodyFatData)) {
     return (
       <Card>
@@ -39,13 +73,6 @@ export const BodyMetricsChart: React.FC<BodyMetricsChartProps> = ({
               onClick={() => onPeriodChange('month')}
             >
               月間
-            </Button>
-            <Button
-              variant={period === 'year' ? 'primary' : 'outline'}
-              size="sm"
-              onClick={() => onPeriodChange('year')}
-            >
-              年間
             </Button>
           </div>
         </div>
@@ -70,6 +97,14 @@ export const BodyMetricsChart: React.FC<BodyMetricsChartProps> = ({
     Math.min(100, Math.max(...bodyFats) + 2)
   ] : undefined;
 
+  const TrendIcon = ({ change }: { change: { value: number; isPositive: boolean } | null }) => {
+    if (!change) return <Minus className="w-4 h-4 text-gray-400" />;
+    if (change.value === 0) return <Minus className="w-4 h-4 text-gray-400" />;
+    return change.isPositive 
+      ? <TrendingUp className="w-4 h-4 text-red-500" />
+      : <TrendingDown className="w-4 h-4 text-green-500" />;
+  };
+
   return (
     <Card>
       <div className="flex items-center justify-between mb-4">
@@ -89,13 +124,6 @@ export const BodyMetricsChart: React.FC<BodyMetricsChartProps> = ({
           >
             月間
           </Button>
-          <Button
-            variant={period === 'year' ? 'primary' : 'outline'}
-            size="sm"
-            onClick={() => onPeriodChange('year')}
-          >
-            年間
-          </Button>
         </div>
       </div>
 
@@ -108,9 +136,7 @@ export const BodyMetricsChart: React.FC<BodyMetricsChartProps> = ({
               tick={{ fontSize: 12 }}
               tickFormatter={(value) => {
                 const date = new Date(value);
-                return period === 'year' 
-                  ? `${date.getMonth() + 1}/${date.getDate()}`
-                  : `${date.getMonth() + 1}/${date.getDate()}`;
+                return `${date.getMonth() + 1}/${date.getDate()}`;
               }}
             />
             
@@ -180,49 +206,49 @@ export const BodyMetricsChart: React.FC<BodyMetricsChartProps> = ({
         </ResponsiveContainer>
       </div>
 
-      {/* 統計情報 */}
+      {/* 統計情報と前回との差異 */}
       <div className="mt-4 pt-4 border-t border-gray-200">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+        <div className="grid grid-cols-2 md:grid-cols-2 gap-6 text-sm">
           {hasWeightData && (
-            <>
-              <div className="text-center">
-                <div className="text-purple-600 font-medium">最新体重</div>
-                <div className="text-lg font-bold text-gray-900">
-                  {weights.length > 0 ? `${weights[weights.length - 1]}kg` : '-'}
-                </div>
+            <div className="text-center">
+              <div className="text-purple-600 font-medium">最新体重</div>
+              <div className="text-lg font-bold text-gray-900">
+                {trend?.latest.weight ? `${trend.latest.weight}kg` : '-'}
               </div>
-              <div className="text-center">
-                <div className="text-purple-600 font-medium">体重変化</div>
-                <div className="text-lg font-bold text-gray-900">
-                  {weights.length >= 2 
-                    ? `${weights[weights.length - 1] - weights[0] >= 0 ? '+' : ''}${(weights[weights.length - 1] - weights[0]).toFixed(1)}kg`
-                    : '-'
-                  }
+              {trend?.weightChange && (
+                <div className="flex items-center justify-center gap-1 mt-1">
+                  <TrendIcon change={trend.weightChange} />
+                  <span className={`text-xs font-medium ${
+                    trend.weightChange.value === 0 ? 'text-gray-500' :
+                    trend.weightChange.isPositive ? 'text-red-600' : 'text-green-600'
+                  }`}>
+                    前回比: {trend.weightChange.value === 0 ? '変化なし' :
+                     `${trend.weightChange.value >= 0 ? '+' : ''}${trend.weightChange.value.toFixed(1)}kg`}
+                  </span>
                 </div>
-                <div className="text-xs text-gray-500 mt-1">期間全体</div>
-              </div>
-            </>
+              )}
+            </div>
           )}
           
           {hasBodyFatData && (
-            <>
-              <div className="text-center">
-                <div className="text-amber-600 font-medium">最新体脂肪率</div>
-                <div className="text-lg font-bold text-gray-900">
-                  {bodyFats.length > 0 ? `${bodyFats[bodyFats.length - 1]}%` : '-'}
-                </div>
+            <div className="text-center">
+              <div className="text-amber-600 font-medium">最新体脂肪率</div>
+              <div className="text-lg font-bold text-gray-900">
+                {trend?.latest.bodyFatPercentage ? `${trend.latest.bodyFatPercentage}%` : '-'}
               </div>
-              <div className="text-center">
-                <div className="text-amber-600 font-medium">体脂肪率変化</div>
-                <div className="text-lg font-bold text-gray-900">
-                  {bodyFats.length >= 2 
-                    ? `${bodyFats[bodyFats.length - 1] - bodyFats[0] >= 0 ? '+' : ''}${(bodyFats[bodyFats.length - 1] - bodyFats[0]).toFixed(1)}%`
-                    : '-'
-                  }
+              {trend?.bodyFatChange && (
+                <div className="flex items-center justify-center gap-1 mt-1">
+                  <TrendIcon change={trend.bodyFatChange} />
+                  <span className={`text-xs font-medium ${
+                    trend.bodyFatChange.value === 0 ? 'text-gray-500' :
+                    trend.bodyFatChange.isPositive ? 'text-red-600' : 'text-green-600'
+                  }`}>
+                    前回比: {trend.bodyFatChange.value === 0 ? '変化なし' :
+                     `${trend.bodyFatChange.value >= 0 ? '+' : ''}${trend.bodyFatChange.value.toFixed(1)}%`}
+                  </span>
                 </div>
-                <div className="text-xs text-gray-500 mt-1">期間全体</div>
-              </div>
-            </>
+              )}
+            </div>
           )}
         </div>
       </div>
