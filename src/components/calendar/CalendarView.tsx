@@ -44,8 +44,8 @@ export const CalendarView: React.FC = () => {
     const hasTrainingData = hasRunning || hasStrength;
 
     return (
-      <div className="mt-1 w-full h-full flex flex-col justify-start gap-0.5 sm:gap-1">
-        <div className="pl-2 sm:pl-[400px] space-y-0.5 sm:space-y-1">
+      <div className="absolute inset-0 flex flex-col justify-start pt-4 sm:pt-6">
+        <div className="pl-2 sm:pl-[100px] space-y-0.5 sm:space-y-1">
           {/* 1段目: トレーニングアイコン（データがある場合のみ） */}
           {hasTrainingData && (
             <div className="flex justify-start items-center gap-0.5 sm:gap-1 h-3 sm:h-5">
@@ -231,7 +231,7 @@ export const CalendarView: React.FC = () => {
           position: relative;
           font-size: 10px;
           line-height: 1.2;
-          overflow: hidden;
+          overflow: visible;
         }
         
         @media (min-width: 640px) {
@@ -317,7 +317,7 @@ export const CalendarView: React.FC = () => {
         /* スマホでの詳細調整 */
         @media (max-width: 639px) {
           .calendar-container .react-calendar__tile {
-            overflow: hidden;
+            overflow: visible;
           }
           
           /* 日付番号のサイズ調整 */
