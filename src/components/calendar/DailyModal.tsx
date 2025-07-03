@@ -258,18 +258,18 @@ export const DailyModal: React.FC = () => {
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden">
-      <div className="flex min-h-screen items-end sm:items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center p-2 sm:p-4">
         <div 
           className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
           onClick={handleModalClose}
         />
         
-        {/* モーダルコンテナ - スマホでは画面全体、デスクトップでは通常サイズ */}
-        <div className="relative w-full h-full sm:h-auto sm:max-w-2xl sm:max-h-[90vh] transform overflow-hidden bg-white text-left shadow-xl transition-all sm:rounded-lg">
+        {/* モーダルコンテナ - スマホでは90%x80%、デスクトップでは通常サイズ */}
+        <div className="relative w-[90%] h-[80%] sm:w-full sm:h-auto sm:max-w-2xl sm:max-h-[90vh] transform overflow-hidden bg-white text-left shadow-xl transition-all sm:rounded-lg rounded-lg">
           {/* ヘッダー */}
-          <div className="sticky top-0 z-10 bg-white border-b border-gray-200 px-4 py-3 sm:px-6 sm:py-4">
+          <div className="sticky top-0 z-10 bg-white border-b border-gray-200 px-3 py-2 sm:px-6 sm:py-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-base sm:text-lg font-medium leading-6 text-gray-900">
+              <h3 className="text-sm sm:text-lg font-medium leading-6 text-gray-900">
                 日次記録 - {format(selectedDate, 'yyyy年M月d日')}
               </h3>
               <button
@@ -277,17 +277,17 @@ export const DailyModal: React.FC = () => {
                 className="rounded-md bg-white text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 p-1"
                 onClick={handleModalClose}
               >
-                <X className="h-5 w-5 sm:h-6 sm:w-6" />
+                <X className="h-4 w-4 sm:h-6 sm:w-6" />
               </button>
             </div>
           </div>
 
           {/* スクロール可能なコンテンツエリア */}
-          <div className="flex-1 overflow-y-auto px-4 py-4 sm:px-6 sm:py-6" style={{ 
-            height: 'calc(100vh - 140px)', // ヘッダー(60px) + フッター(80px) を除いた高さ
-            maxHeight: 'calc(100vh - 140px)'
+          <div className="flex-1 overflow-y-auto px-3 py-3 sm:px-6 sm:py-6" style={{ 
+            height: 'calc(100% - 120px)', // ヘッダー(50px) + フッター(70px) を除いた高さ
+            maxHeight: 'calc(100% - 120px)'
           }}>
-            <div className="space-y-4 sm:space-y-6">
+            <div className="space-y-3 sm:space-y-6">
               {/* Training Section */}
               <div>
                 <h4 className="text-sm sm:text-lg font-medium text-gray-900 mb-2 sm:mb-3 flex items-center gap-2">
@@ -353,7 +353,7 @@ export const DailyModal: React.FC = () => {
                   </div>
                   体重・体脂肪率
                 </h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
                   <div className="space-y-1">
                     <label className="block text-xs sm:text-sm font-medium text-gray-700">
                       体重 (kg)
@@ -385,7 +385,7 @@ export const DailyModal: React.FC = () => {
               </div>
 
               {/* Study Section - 余白を調整 */}
-              <div className="pb-2 sm:pb-0">
+              <div className="pb-1 sm:pb-0">
                 <h4 className="text-sm sm:text-lg font-medium text-gray-900 mb-2 sm:mb-3 flex items-center gap-2">
                   <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-amber-500 rounded-full flex items-center justify-center bg-transparent">
                     <img 
@@ -398,12 +398,12 @@ export const DailyModal: React.FC = () => {
                 </h4>
                 
                 {availableBooks.length === 0 ? (
-                  <div className="text-center py-4 sm:py-8 text-gray-500">
-                    <div className="w-8 h-8 sm:w-12 sm:h-12 border-2 border-amber-500 rounded-full flex items-center justify-center bg-transparent mx-auto mb-2">
+                  <div className="text-center py-3 sm:py-8 text-gray-500">
+                    <div className="w-6 h-6 sm:w-12 sm:h-12 border-2 border-amber-500 rounded-full flex items-center justify-center bg-transparent mx-auto mb-2">
                       <img 
                         src="/icons/notebook.svg" 
                         alt="学習"
-                        className="w-4 h-4 sm:w-6 sm:h-6 opacity-30"
+                        className="w-3 h-3 sm:w-6 sm:h-6 opacity-30"
                       />
                     </div>
                     <p className="text-xs sm:text-base">選択可能な書籍がありません</p>
@@ -443,7 +443,7 @@ export const DailyModal: React.FC = () => {
                               {availableChapters.length === 0 ? (
                                 <p className="text-xs sm:text-sm text-gray-500 italic">選択可能な章がありません</p>
                               ) : (
-                                <div className="grid grid-cols-1 gap-1 sm:gap-2 max-h-20 sm:max-h-32 overflow-y-auto">
+                                <div className="grid grid-cols-1 gap-1 sm:gap-2 max-h-16 sm:max-h-32 overflow-y-auto">
                                   {availableChapters.map(chapter => (
                                     <label key={chapter.id} className="flex items-center gap-1 sm:gap-2 cursor-pointer p-1 sm:p-2 rounded hover:bg-gray-50 transition-colors">
                                       <input
@@ -472,18 +472,18 @@ export const DailyModal: React.FC = () => {
           </div>
 
           {/* フッター（固定） */}
-          <div className="sticky bottom-10 bg-white border-t border-gray-200 px-4 py-3 sm:px-6 sm:py-4">
+          <div className="sticky bottom-0 bg-white border-t border-gray-200 px-3 py-2 sm:px-6 sm:py-4">
             <div className="flex justify-end gap-2 sm:gap-3">
               <Button
                 variant="outline"
                 onClick={handleModalClose}
-                className="text-xs sm:text-base px-3 py-1.5 sm:px-4 sm:py-2"
+                className="text-xs sm:text-base px-2 py-1 sm:px-4 sm:py-2"
               >
                 キャンセル
               </Button>
               <Button 
                 onClick={handleSave} 
-                className="flex items-center gap-1 sm:gap-2 text-xs sm:text-base px-3 py-1.5 sm:px-4 sm:py-2"
+                className="flex items-center gap-1 sm:gap-2 text-xs sm:text-base px-2 py-1 sm:px-4 sm:py-2"
                 disabled={isLoading}
               >
                 <Save className="h-3 w-3 sm:h-4 sm:w-4" />
