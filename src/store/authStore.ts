@@ -165,7 +165,7 @@ export const useAuthStore = create<AuthState>()(
         try {
           const user = await getCurrentUser();
           if (user) {
-            const { data: profile } = await getUserProfile(user.id);
+            const { data: profile, error: profileError } = await getUserProfile(user.id);
             if (profile && profile.status === 'approved') {
               const userProfile: User = {
                 id: profile.id,
@@ -177,10 +177,18 @@ export const useAuthStore = create<AuthState>()(
                 approvedAt: profile.approved_at ? new Date(profile.approved_at) : undefined,
               };
               set({ user: userProfile, isAuthenticated: true });
+            } else {
+              // Profile doesn't exist or user is not approved - clear auth state
+              set({ user: null, token: null, isAuthenticated: false });
             }
+          } else {
+            // No user found - clear auth state
+            set({ user: null, token: null, isAuthenticated: false });
           }
         } catch (error) {
           console.error('認証チェックエラー:', error);
+          // Clear auth state on any error (including session_not_found)
+          set({ user: null, token: null, isAuthenticated: false });
         }
       },
     }),
