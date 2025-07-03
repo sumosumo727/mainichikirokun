@@ -44,27 +44,27 @@ export const CalendarView: React.FC = () => {
     const hasTrainingData = hasRunning || hasStrength;
 
     return (
-      <div className="absolute inset-0 flex flex-col justify-start pt-4 sm:pt-6">
-        <div className="pl-1 sm:pl-[30px] space-y-0.5 sm:space-y-1">
+      <div className="absolute inset-0 flex flex-col justify-start pt-5 sm:pt-6">
+        <div className="pl-1.5 sm:pl-[30px] space-y-1 sm:space-y-1">
           {/* 1段目: トレーニングアイコン（データがある場合のみ） */}
           {hasTrainingData && (
-            <div className="flex justify-start items-center gap-0.5 sm:gap-1 h-3 sm:h-5">
+            <div className="flex justify-start items-center gap-1 sm:gap-1 h-4 sm:h-5">
               {hasStrength && (
-                <div className="w-3 h-3 sm:w-5 sm:h-5 border border-green-500 sm:border-2 rounded-full flex items-center justify-center bg-transparent">
+                <div className="w-4 h-4 sm:w-5 sm:h-5 border border-green-500 sm:border-2 rounded-full flex items-center justify-center bg-transparent">
                   <img 
                     src="/icons/dumbbell.svg" 
                     alt="筋力トレーニング"
-                    className="w-1.5 h-1.5 sm:w-3 sm:h-3"
+                    className="w-2 h-2 sm:w-3 sm:h-3"
                     title="筋力トレーニング"
                   />
                 </div>
               )}
               {hasRunning && (
-                <div className="w-3 h-3 sm:w-5 sm:h-5 border border-blue-500 sm:border-2 rounded-full flex items-center justify-center bg-transparent">
+                <div className="w-4 h-4 sm:w-5 sm:h-5 border border-blue-500 sm:border-2 rounded-full flex items-center justify-center bg-transparent">
                   <img 
                     src="/icons/bicycle.svg" 
                     alt="有酸素"
-                    className="w-1.5 h-1.5 sm:w-3 sm:h-3"
+                    className="w-2 h-2 sm:w-3 sm:h-3"
                     title="有酸素"
                   />
                 </div>
@@ -75,12 +75,12 @@ export const CalendarView: React.FC = () => {
           {/* 2段目: 体重データ（スマホでは別行表示） */}
           {hasHealthData && (
             <div className="flex justify-start items-start h-auto">
-              <div className="flex items-start gap-0.5 sm:gap-1">
-                <div className="w-3 h-3 sm:w-5 sm:h-5 border border-purple-500 sm:border-2 rounded-full flex items-center justify-center bg-transparent flex-shrink-0">
+              <div className="flex items-start gap-1 sm:gap-1">
+                <div className="w-4 h-4 sm:w-5 sm:h-5 border border-purple-500 sm:border-2 rounded-full flex items-center justify-center bg-transparent flex-shrink-0">
                   <img 
                     src="/icons/scale.svg" 
                     alt="体重・体脂肪率"
-                    className="w-1.5 h-1.5 sm:w-3 sm:h-3"
+                    className="w-2 h-2 sm:w-3 sm:h-3"
                     title="体重・体脂肪率"
                   />
                 </div>
@@ -88,12 +88,12 @@ export const CalendarView: React.FC = () => {
                   {/* スマホでは縦並び、デスクトップでは横並び */}
                   <div className="block sm:hidden">
                     {hasWeight && (
-                      <div className="text-[7px] whitespace-nowrap">
+                      <div className="text-[8px] whitespace-nowrap">
                         {health?.weight}kg
                       </div>
                     )}
                     {hasBodyFat && (
-                      <div className="text-[7px] whitespace-nowrap">
+                      <div className="text-[8px] whitespace-nowrap">
                         {health?.bodyFatPercentage}%
                       </div>
                     )}
@@ -110,17 +110,17 @@ export const CalendarView: React.FC = () => {
           
           {/* 3段目: 学習データ */}
           {hasStudy && (
-            <div className="flex justify-start items-center h-3 sm:h-5">
-              <div className="flex items-center gap-0.5 sm:gap-1">
-                <div className="w-3 h-3 sm:w-5 sm:h-5 border border-amber-500 sm:border-2 rounded-full flex items-center justify-center bg-transparent">
+            <div className="flex justify-start items-center h-4 sm:h-5">
+              <div className="flex items-center gap-1 sm:gap-1">
+                <div className="w-4 h-4 sm:w-5 sm:h-5 border border-amber-500 sm:border-2 rounded-full flex items-center justify-center bg-transparent">
                   <img 
                     src="/icons/notebook.svg" 
                     alt="学習"
-                    className="w-1.5 h-1.5 sm:w-3 sm:h-3"
+                    className="w-2 h-2 sm:w-3 sm:h-3"
                     title="学習"
                   />
                 </div>
-                <span className="text-[7px] sm:text-xs text-amber-700 font-medium">
+                <span className="text-[8px] sm:text-xs text-amber-700 font-medium">
                   {record?.studyProgress.length}章
                 </span>
               </div>
@@ -221,22 +221,22 @@ export const CalendarView: React.FC = () => {
         }
         
         .calendar-container .react-calendar__tile {
-          height: 70px;
+          height: 91px; /* 70px × 1.3 = 91px */
           display: flex;
           flex-direction: column;
           align-items: flex-start;
           justify-content: flex-start;
-          padding: 2px 1px 1px 1px;
+          padding: 3px 2px 2px 2px; /* パディングも比例調整 */
           border: 1px solid #e5e7eb;
           position: relative;
-          font-size: 10px;
+          font-size: 11px; /* フォントサイズも微調整 */
           line-height: 1.2;
           overflow: visible;
         }
         
         @media (min-width: 640px) {
           .calendar-container .react-calendar__tile {
-            height: 110px;
+            height: 110px; /* デスクトップは変更なし */
             padding: 6px 4px 4px 4px;
             font-size: 14px;
           }
@@ -322,8 +322,19 @@ export const CalendarView: React.FC = () => {
           
           /* 日付番号のサイズ調整 */
           .calendar-container .react-calendar__tile abbr {
-            font-size: 9px;
+            font-size: 10px; /* 9px → 10px に微調整 */
             font-weight: 500;
+          }
+          
+          /* カレンダー全体のコンテナ高さ調整 */
+          .calendar-container {
+            min-height: 420px; /* 約1.3倍に調整 */
+          }
+        }
+        
+        @media (min-width: 640px) {
+          .calendar-container {
+            min-height: auto; /* デスクトップは自動調整 */
           }
         }
       `}</style>
