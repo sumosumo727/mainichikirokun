@@ -67,7 +67,8 @@ export const MonthlyChart: React.FC<MonthlyChartProps> = ({ data, trainingDistri
                   return `${year}年${parseInt(month)}月`;
                 }}
                 formatter={(value, name) => [
-                  `${value}日`,
+                  name === 'running' ? `${value}回` : 
+                  name === 'strength' ? `${value}回` : `${value}章`,
                   name === 'running' ? '有酸素運動' : 
                   name === 'strength' ? '筋力トレーニング' : '学習進捗'
                 ]}

@@ -8,8 +8,8 @@ import { MonthlyChart } from '../components/dashboard/MonthlyChart';
 import { BodyMetricsChart } from '../components/dashboard/BodyMetricsChart';
 import { useAppStore } from '../store/appStore';
 import { useAuthStore } from '../store/authStore';
-import { PersonStanding, Dumbbell, BookOpen, TrendingUp, Scale, CheckCircle, Target } from 'lucide-react';
-import { format, getDaysInMonth } from 'date-fns';
+import { PersonStanding, Dumbbell, BookOpen, TrendingUp, Scale, CheckCircle } from 'lucide-react';
+import { format, getDaysInMonth, startOfMonth, endOfMonth } from 'date-fns';
 
 export const DashboardPage: React.FC = () => {
   const [currentView, setCurrentView] = useState<'calendar' | 'books' | 'stats'>('calendar');
@@ -44,16 +44,28 @@ export const DashboardPage: React.FC = () => {
     ? healthData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0]
     : null;
 
-  // 書籍進捗の詳細計算
+  // 当月の学習進捗を計算
+  const calculateCurrentMonthStudyProgress = () => {
+    const monthStart = startOfMonth(currentDate);
+    const monthEnd = endOfMonth(currentDate);
+    
+    const currentMonthRecords = dailyRecords.filter(record => {
+      const recordDate = new Date(record.date);
+      return recordDate >= monthStart && recordDate <= monthEnd;
+    });
+
+    // 当月に完了した章数を計算
+    const completedChaptersThisMonth = currentMonthRecords.reduce((total, record) => {
+      return total + record.studyProgress.length;
+    }, 0);
+
+    return completedChaptersThisMonth;
+  };
+
+  // 書籍進捗の詳細計算（全期間）
   const calculateBookProgress = () => {
     const selectedChapters = getSelectedChapters();
     
-    // 全章数と完了章数を計算
-    const totalChapters = books.reduce((total, book) => total + book.chapters.length, 0);
-    const completedChapters = books.reduce((total, book) => {
-      return total + book.chapters.filter(chapter => selectedChapters.has(chapter.id)).length;
-    }, 0);
-
     // 進行中の書籍（一部章が完了）
     const inProgressBooks = books.filter(book => {
       const bookCompletedChapters = book.chapters.filter(chapter => selectedChapters.has(chapter.id)).length;
@@ -66,19 +78,14 @@ export const DashboardPage: React.FC = () => {
       return book.chapters.every(chapter => selectedChapters.has(chapter.id));
     }).length;
 
-    // 全体進捗率
-    const overallProgress = totalChapters > 0 ? Math.round((completedChapters / totalChapters) * 100) : 0;
-
     return {
-      totalChapters,
-      completedChapters,
       inProgressBooks,
-      completedBooks,
-      overallProgress
+      completedBooks
     };
   };
 
   const bookProgress = calculateBookProgress();
+  const currentMonthStudyProgress = calculateCurrentMonthStudyProgress();
 
   const renderContent = () => {
     if (isLoading && currentView !== 'stats') {
@@ -105,28 +112,21 @@ export const DashboardPage: React.FC = () => {
       case 'stats':
         return (
           <div className="space-y-6">
-            {/* 基本統計 */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+            {/* 1段目：運動記録 */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <StatsCard
-                title="有酸素運動日数"
-                value={monthlyStats?.trainingBreakdown.runningDays || 0}
+                title="有酸素運動"
+                value={`${monthlyStats?.trainingBreakdown.runningDays || 0}回`}
                 icon={<PersonStanding className="h-5 w-5" />}
                 color="blue"
-                subtitle="今月の実施日数"
+                subtitle="今月の実施回数"
               />
               <StatsCard
-                title="筋力トレーニング日数"
-                value={monthlyStats?.trainingBreakdown.strengthDays || 0}
+                title="筋力トレーニング"
+                value={`${monthlyStats?.trainingBreakdown.strengthDays || 0}回`}
                 icon={<Dumbbell className="h-5 w-5" />}
                 color="green"
-                subtitle="今月の実施日数"
-              />
-              <StatsCard
-                title="学習進捗"
-                value={`${bookProgress.completedChapters}章`}
-                icon={<BookOpen className="h-5 w-5" />}
-                color="amber"
-                subtitle={`全${bookProgress.totalChapters}章中`}
+                subtitle="今月の実施回数"
               />
               <StatsCard
                 title="トレーニング実施率"
@@ -144,28 +144,28 @@ export const DashboardPage: React.FC = () => {
               />
             </div>
 
-            {/* 書籍進捗詳細 */}
+            {/* 2段目：学習・読書進捗 */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <StatsCard
+                title="学習進捗"
+                value={`${currentMonthStudyProgress}章`}
+                icon={<BookOpen className="h-5 w-5" />}
+                color="amber"
+                subtitle="今月完了した章数"
+              />
               <StatsCard
                 title="進行中の書籍"
                 value={bookProgress.inProgressBooks}
                 icon={<BookOpen className="h-5 w-5" />}
                 color="amber"
-                subtitle="一部章が完了済み"
+                subtitle="一部章が完了済み（全期間）"
               />
               <StatsCard
                 title="完了した書籍"
                 value={bookProgress.completedBooks}
                 icon={<CheckCircle className="h-5 w-5" />}
                 color="green"
-                subtitle="全章完了済み"
-              />
-              <StatsCard
-                title="全体進捗率"
-                value={`${bookProgress.overallProgress}%`}
-                icon={<Target className="h-5 w-5" />}
-                color="blue"
-                subtitle={`${bookProgress.completedChapters}/${bookProgress.totalChapters}章完了`}
+                subtitle="全章完了済み（全期間）"
               />
             </div>
             
