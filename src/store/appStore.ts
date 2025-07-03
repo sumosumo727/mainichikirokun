@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import type { Book, DailyRecord, MonthlyStats, Chapter } from '../types';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, subMonths, getDaysInMonth } from 'date-fns';
+import type { Book, DailyRecord, MonthlyStats, Chapter, BodyMetrics, StatsPeriod, BodyMetricsChartData } from '../types';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, subMonths, getDaysInMonth, subWeeks, startOfWeek, endOfWeek, subYears, startOfYear, endOfYear } from 'date-fns';
 import { 
   getBooks, 
   createBook, 
@@ -14,18 +14,24 @@ import {
   getDailyRecords,
   upsertDailyRecord,
   createStudyProgress,
-  deleteStudyProgress
+  deleteStudyProgress,
+  getHealthData,
+  upsertHealthData,
+  deleteHealthData
 } from '../lib/supabase';
 
 interface AppState {
   books: Book[];
   dailyRecords: DailyRecord[];
+  healthData: BodyMetrics[];
   currentDate: Date;
   selectedDate: Date | null;
   showDailyModal: boolean;
   monthlyStats: MonthlyStats | null;
   chartData: Array<{ month: string; running: number; strength: number; study: number; }>;
   trainingDistribution: { running: number; strength: number; };
+  bodyMetricsChartData: BodyMetricsChartData[];
+  bodyMetricsPeriod: StatsPeriod;
   isLoading: boolean;
   
   // 章選択の永続化用
@@ -41,13 +47,19 @@ interface AppState {
   addDailyRecord: (record: Omit<DailyRecord, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
   updateDailyRecord: (id: string, updates: Partial<DailyRecord>) => Promise<void>;
   
+  setHealthData: (data: BodyMetrics[]) => void;
+  addHealthData: (data: Omit<BodyMetrics, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
+  updateHealthData: (id: string, updates: Partial<BodyMetrics>) => Promise<void>;
+  
   setCurrentDate: (date: Date) => void;
   setSelectedDate: (date: Date | null) => void;
   setShowDailyModal: (show: boolean) => void;
+  setBodyMetricsPeriod: (period: StatsPeriod) => void;
   
   calculateMonthlyStats: (month: Date) => void;
   calculateChartData: () => void;
   calculateTrainingDistribution: () => void;
+  calculateBodyMetricsChartData: () => void;
   
   // 新機能: 章の完了状態を更新
   updateChapterCompletion: (bookId: string, chapterId: string, isCompleted: boolean, completedDate?: string) => void;
@@ -109,15 +121,30 @@ const transformSupabaseDailyRecordToDailyRecord = (supabaseRecord: any): DailyRe
   };
 };
 
+const transformSupabaseHealthDataToBodyMetrics = (supabaseHealth: any): BodyMetrics => {
+  return {
+    id: supabaseHealth.id,
+    userId: supabaseHealth.user_id,
+    date: supabaseHealth.record_date,
+    weight: supabaseHealth.weight,
+    bodyFatPercentage: supabaseHealth.body_fat_percentage,
+    createdAt: new Date(supabaseHealth.created_at),
+    updatedAt: new Date(supabaseHealth.updated_at),
+  };
+};
+
 export const useAppStore = create<AppState>()((set, get) => ({
   books: [],
   dailyRecords: [],
+  healthData: [],
   currentDate: new Date(),
   selectedDate: null,
   showDailyModal: false,
   monthlyStats: null,
   chartData: [],
   trainingDistribution: { running: 0, strength: 0 },
+  bodyMetricsChartData: [],
+  bodyMetricsPeriod: 'month',
   isLoading: false,
   persistentChapterSelections: new Map(),
 
@@ -439,9 +466,77 @@ export const useAppStore = create<AppState>()((set, get) => ({
     }
   },
 
+  setHealthData: (data) => set({ healthData: data }),
+
+  addHealthData: async (healthData) => {
+    set({ isLoading: true });
+    try {
+      const { data: result, error } = await upsertHealthData(
+        healthData.userId,
+        {
+          record_date: healthData.date,
+          weight: healthData.weight,
+          body_fat_percentage: healthData.bodyFatPercentage,
+        }
+      );
+
+      if (error) throw error;
+      if (!result) throw new Error('体重データの作成に失敗しました');
+
+      const newHealthData: BodyMetrics = {
+        id: result.id,
+        userId: result.user_id,
+        date: result.record_date,
+        weight: result.weight,
+        bodyFatPercentage: result.body_fat_percentage,
+        createdAt: new Date(result.created_at),
+        updatedAt: new Date(result.updated_at),
+      };
+
+      set((state) => {
+        const existingIndex = state.healthData.findIndex(h => h.date === healthData.date);
+        if (existingIndex >= 0) {
+          // 既存の記録を更新
+          const updatedData = [...state.healthData];
+          updatedData[existingIndex] = newHealthData;
+          return { healthData: updatedData, isLoading: false };
+        } else {
+          // 新しい記録を追加
+          return { healthData: [...state.healthData, newHealthData], isLoading: false };
+        }
+      });
+
+      // チャートデータを再計算
+      get().calculateBodyMetricsChartData();
+    } catch (error) {
+      console.error('体重データ追加エラー:', error);
+      set({ isLoading: false });
+      throw error;
+    }
+  },
+
+  updateHealthData: async (id, updates) => {
+    const state = get();
+    const existingHealth = state.healthData.find(h => h.id === id);
+    
+    if (existingHealth) {
+      const updatedHealth = { ...existingHealth, ...updates };
+      await get().addHealthData({
+        userId: updatedHealth.userId,
+        date: updatedHealth.date,
+        weight: updatedHealth.weight,
+        bodyFatPercentage: updatedHealth.bodyFatPercentage,
+      });
+    }
+  },
+
   setCurrentDate: (date) => set({ currentDate: date }),
   setSelectedDate: (date) => set({ selectedDate: date }),
   setShowDailyModal: (show) => set({ showDailyModal: show }),
+  setBodyMetricsPeriod: (period) => {
+    set({ bodyMetricsPeriod: period });
+    get().calculateBodyMetricsChartData();
+  },
 
   updateChapterCompletion: (bookId, chapterId, isCompleted, completedDate) => {
     set((state) => ({
@@ -681,13 +776,17 @@ export const useAppStore = create<AppState>()((set, get) => ({
 
       const runningDays = monthRecords.filter((r) => r.training.running).length;
       const strengthDays = monthRecords.filter((r) => r.training.strength).length;
-      const studyDays = monthRecords.filter((r) => r.studyProgress.length > 0).length;
+      
+      // 学習進捗は章数で計算
+      const studyChapters = monthRecords.reduce((total, record) => {
+        return total + record.studyProgress.length;
+      }, 0);
 
       chartData.push({
         month: format(targetMonth, 'yyyy/MM'),
         running: runningDays,
         strength: strengthDays,
-        study: studyDays,
+        study: studyChapters,
       });
     }
 
@@ -725,6 +824,46 @@ export const useAppStore = create<AppState>()((set, get) => ({
     });
   },
 
+  calculateBodyMetricsChartData: () => {
+    const { healthData, bodyMetricsPeriod } = get();
+    const now = new Date();
+    let startDate: Date;
+    let endDate: Date;
+
+    // 期間に応じて開始日と終了日を設定
+    switch (bodyMetricsPeriod) {
+      case 'week':
+        startDate = subWeeks(now, 2); // 直近2週間
+        endDate = now;
+        break;
+      case 'month':
+        startDate = subMonths(now, 1); // 直近1ヶ月
+        endDate = now;
+        break;
+      default:
+        startDate = subMonths(now, 1);
+        endDate = now;
+    }
+
+    // 期間内のデータをフィルタリング
+    const filteredData = healthData.filter(data => {
+      const dataDate = new Date(data.date);
+      return dataDate >= startDate && dataDate <= endDate;
+    });
+
+    // 日付順にソート
+    const sortedData = filteredData.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+    // チャートデータに変換
+    const chartData: BodyMetricsChartData[] = sortedData.map(data => ({
+      date: data.date,
+      weight: data.weight || undefined,
+      bodyFatPercentage: data.bodyFatPercentage || undefined,
+    }));
+
+    set({ bodyMetricsChartData: chartData });
+  },
+
   loadInitialData: async (userId: string) => {
     set({ isLoading: true });
     try {
@@ -736,13 +875,19 @@ export const useAppStore = create<AppState>()((set, get) => ({
       const { data: recordsData, error: recordsError } = await getDailyRecords(userId);
       if (recordsError) throw recordsError;
 
+      // 体重データを取得
+      const { data: healthDataResult, error: healthError } = await getHealthData(userId);
+      if (healthError) throw healthError;
+
       // データを変換
       const books = (booksData || []).map(transformSupabaseBookToBook);
       const dailyRecords = (recordsData || []).map(transformSupabaseDailyRecordToDailyRecord);
+      const healthData = (healthDataResult || []).map(transformSupabaseHealthDataToBodyMetrics);
 
       set({ 
         books, 
         dailyRecords,
+        healthData,
         isLoading: false 
       });
 
@@ -758,6 +903,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
       get().calculateChartData();
       get().calculateMonthlyStats(new Date());
       get().calculateTrainingDistribution();
+      get().calculateBodyMetricsChartData();
     } catch (error) {
       console.error('初期データ読み込みエラー:', error);
       set({ isLoading: false });

@@ -88,7 +88,7 @@ export interface DailyInputModal {
 }
 
 // 健康データ関連の型定義
-export interface HealthData {
+export interface BodyMetrics {
   id: string;
   userId: string;
   date: string; // YYYY-MM-DD
@@ -102,4 +102,40 @@ export interface HealthKitData {
   weight: number;
   bodyFatPercentage: number;
   date: string;
+}
+
+// 統計期間の型定義
+export type StatsPeriod = 'week' | 'month' | 'year';
+
+// 体重・体脂肪率チャートデータの型定義
+export interface BodyMetricsChartData {
+  date: string;
+  weight?: number;
+  bodyFatPercentage?: number;
+}
+
+// 体重・体脂肪率の変化データ
+export interface BodyMetricsTrend {
+  current: {
+    weight?: number;
+    bodyFatPercentage?: number;
+    date: string;
+  };
+  previous: {
+    weight?: number;
+    bodyFatPercentage?: number;
+    date: string;
+  };
+  changes: {
+    weight?: {
+      value: number;
+      percentage: number;
+      isPositive: boolean;
+    };
+    bodyFatPercentage?: {
+      value: number;
+      percentage: number;
+      isPositive: boolean;
+    };
+  };
 }

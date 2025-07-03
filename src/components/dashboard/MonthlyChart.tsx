@@ -39,8 +39,8 @@ export const MonthlyChart: React.FC<MonthlyChartProps> = ({ data, trainingDistri
 
   // トレーニング比率のデータを準備
   const pieData = [
-    { name: 'ランニング', value: trainingDistribution.running },
-    { name: '筋力トレーニング', value: trainingDistribution.strength },
+    { name: '有酸素', value: trainingDistribution.running },
+    { name: '筋トレ', value: trainingDistribution.strength },
   ].filter(item => item.value > 0);
 
   return (
@@ -51,19 +51,43 @@ export const MonthlyChart: React.FC<MonthlyChartProps> = ({ data, trainingDistri
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={data}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
+              <XAxis 
+                dataKey="month" 
+                tickFormatter={(value) => {
+                  // YYYY/MM形式をMM月形式に変換
+                  const [year, month] = value.split('/');
+                  return `${parseInt(month)}月`;
+                }}
+              />
               <YAxis />
               <Tooltip 
-                labelFormatter={(label) => `${label}月`}
-                formatter={(value, name) => [
-                  `${value}日`,
-                  name === 'running' ? 'ランニング' : 
-                  name === 'strength' ? '筋力トレーニング' : '学習'
-                ]}
+                labelFormatter={(label) => {
+                  // YYYY/MM形式をYYYY年MM月形式に変換
+                  const [year, month] = label.split('/');
+                  return `${year}年${parseInt(month)}月`;
+                }}
+                formatter={(value, name) => {
+                  // ホバー表示の文言を修正
+                  let displayName = '';
+                  let displayValue = '';
+                  
+                  if (name === 'running') {
+                    displayName = '有酸素';
+                    displayValue = `${value}回`;
+                  } else if (name === 'strength') {
+                    displayName = '筋トレ';
+                    displayValue = `${value}回`;
+                  } else if (name === 'study') {
+                    displayName = '学習';
+                    displayValue = `${value}章`;
+                  }
+                  
+                  return [displayValue, displayName];
+                }}
               />
-              <Bar dataKey="running" fill="#3b82f6" name="ランニング" />
-              <Bar dataKey="strength" fill="#10b981" name="筋力トレーニング" />
-              <Bar dataKey="study" fill="#f59e0b" name="学習" />
+              <Bar dataKey="running" fill="#3b82f6" name="running" />
+              <Bar dataKey="strength" fill="#10b981" name="strength" />
+              <Bar dataKey="study" fill="#f59e0b" name="study" />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -106,14 +130,14 @@ export const MonthlyChart: React.FC<MonthlyChartProps> = ({ data, trainingDistri
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 bg-blue-600 rounded-full"></div>
-                  <span>ランニング</span>
+                  <span>有酸素</span>
                 </div>
                 <span className="font-medium">{trainingDistribution.running}%</span>
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 bg-green-600 rounded-full"></div>
-                  <span>筋力トレーニング</span>
+                  <span>筋トレ</span>
                 </div>
                 <span className="font-medium">{trainingDistribution.strength}%</span>
               </div>
