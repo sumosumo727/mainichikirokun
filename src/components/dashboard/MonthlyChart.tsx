@@ -66,16 +66,28 @@ export const MonthlyChart: React.FC<MonthlyChartProps> = ({ data, trainingDistri
                   const [year, month] = label.split('/');
                   return `${year}年${parseInt(month)}月`;
                 }}
-                formatter={(value, name) => [
-                  name === 'running' ? `${value}回` : 
-                  name === 'strength' ? `${value}回` : `${value}章`,
-                  name === 'running' ? '有酸素' : 
-                  name === 'strength' ? '筋トレ' : '学習'
-                ]}
+                formatter={(value, name) => {
+                  // ホバー表示の文言を修正
+                  let displayName = '';
+                  let displayValue = '';
+                  
+                  if (name === 'running') {
+                    displayName = '有酸素';
+                    displayValue = `${value}回`;
+                  } else if (name === 'strength') {
+                    displayName = '筋トレ';
+                    displayValue = `${value}回`;
+                  } else if (name === 'study') {
+                    displayName = '学習';
+                    displayValue = `${value}章`;
+                  }
+                  
+                  return [displayValue, displayName];
+                }}
               />
-              <Bar dataKey="running" fill="#3b82f6" name="有酸素" />
-              <Bar dataKey="strength" fill="#10b981" name="筋トレ" />
-              <Bar dataKey="study" fill="#f59e0b" name="学習" />
+              <Bar dataKey="running" fill="#3b82f6" name="running" />
+              <Bar dataKey="strength" fill="#10b981" name="strength" />
+              <Bar dataKey="study" fill="#f59e0b" name="study" />
             </BarChart>
           </ResponsiveContainer>
         </div>
