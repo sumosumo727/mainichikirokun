@@ -44,14 +44,7 @@ export const CalendarView: React.FC = () => {
     const hasTrainingData = hasRunning || hasStrength;
 
     return (
-      <div className="mt-1 w-full h-full flex flex-col justify-start gap-0.5 sm:gap-1" style={{ paddingLeft: '8px' }}>
-        <style jsx>{`
-          @media (min-width: 640px) {
-            div {
-              padding-left: 30px !important;
-            }
-          }
-        `}</style>
+      <div className="mt-1 w-full h-full flex flex-col justify-start gap-0.5 sm:gap-1 pl-2 sm:pl-25">
         {/* 1段目: トレーニングアイコン（データがある場合のみ） */}
         {hasTrainingData && (
           <div className="flex justify-start items-center gap-0.5 sm:gap-1 h-3 sm:h-5">
