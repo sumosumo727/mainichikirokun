@@ -127,50 +127,51 @@ export const CalendarView: React.FC = () => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-semibold text-gray-900">トレーニング・学習・体重記録</h2>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-4 text-sm text-gray-600">
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 border-2 border-blue-500 rounded-full flex items-center justify-center bg-transparent">
+    <div className="bg-white rounded-lg shadow-md p-3 sm:p-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 gap-4">
+        <h2 className="text-lg sm:text-xl font-semibold text-gray-900">トレーニング・学習・体重記録</h2>
+        <div className="flex items-center gap-2 sm:gap-4">
+          <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-600">
+            <div className="flex items-center gap-1 sm:gap-2">
+              <div className="w-4 h-4 sm:w-6 sm:h-6 border-2 border-blue-500 rounded-full flex items-center justify-center bg-transparent">
                 <img 
                   src="/icons/bicycle.svg" 
                   alt="有酸素"
-                  className="w-3.5 h-3.5"
+                  className="w-2 h-2 sm:w-3.5 sm:h-3.5"
                 />
               </div>
               <span>有酸素</span>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 border-2 border-green-500 rounded-full flex items-center justify-center bg-transparent">
+            <div className="flex items-center gap-1 sm:gap-2">
+              <div className="w-4 h-4 sm:w-6 sm:h-6 border-2 border-green-500 rounded-full flex items-center justify-center bg-transparent">
                 <img 
                   src="/icons/dumbbell.svg" 
                   alt="筋力トレーニング"
-                  className="w-3.5 h-3.5"
+                  className="w-2 h-2 sm:w-3.5 sm:h-3.5"
                 />
               </div>
               <span>筋力トレーニング</span>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 border-2 border-amber-500 rounded-full flex items-center justify-center bg-transparent">
+            <div className="flex items-center gap-1 sm:gap-2">
+              <div className="w-4 h-4 sm:w-6 sm:h-6 border-2 border-amber-500 rounded-full flex items-center justify-center bg-transparent">
                 <img 
                   src="/icons/notebook.svg" 
                   alt="学習"
-                  className="w-3.5 h-3.5"
+                  className="w-2 h-2 sm:w-3.5 sm:h-3.5"
                 />
               </div>
               <span>学習</span>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 border-2 border-purple-500 rounded-full flex items-center justify-center bg-transparent">
+            <div className="flex items-center gap-1 sm:gap-2">
+              <div className="w-4 h-4 sm:w-6 sm:h-6 border-2 border-purple-500 rounded-full flex items-center justify-center bg-transparent">
                 <img 
                   src="/icons/scale.svg" 
                   alt="体重・体脂肪率"
-                  className="w-3.5 h-3.5"
+                  className="w-2 h-2 sm:w-3.5 sm:h-3.5"
                 />
               </div>
-              <span>体重・体脂肪率</span>
+              <span className="hidden sm:inline">体重・体脂肪率</span>
+              <span className="sm:hidden">体重</span>
             </div>
           </div>
         </div>
@@ -189,73 +190,9 @@ export const CalendarView: React.FC = () => {
           tileContent={getTileContent}
           tileClassName={getTileClassName}
           className="w-full border-none"
-          prevLabel={<ChevronLeft className="h-4 w-4" />}
-          nextLabel={<ChevronRight className="h-4 w-4" />}
+          prevLabel={<ChevronLeft className="h-3 w-3 sm:h-4 sm:w-4" />}
+          nextLabel={<ChevronRight className="h-3 w-3 sm:h-4 sm:w-4" />}
         />
-      </div>
-
-      {/* カレンダーの詳細表示エリア */}
-      <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-        <h3 className="text-sm font-medium text-gray-700 mb-3">カレンダーの見方</h3>
-        <div className="space-y-2 text-sm text-gray-600">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-6 h-6 border-2 border-blue-500 rounded-full flex items-center justify-center bg-transparent">
-                <img 
-                  src="/icons/bicycle.svg" 
-                  alt="有酸素"
-                  className="w-3.5 h-3.5"
-                />
-              </div>
-              <span>有酸素運動を実施した日</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="w-6 h-6 border-2 border-green-500 rounded-full flex items-center justify-center bg-transparent">
-                <img 
-                  src="/icons/dumbbell.svg" 
-                  alt="筋力トレーニング"
-                  className="w-3.5 h-3.5"
-                />
-              </div>
-              <span>筋力トレーニングを実施した日</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="w-6 h-6 border-2 border-amber-500 rounded-full flex items-center justify-center bg-transparent">
-                <img 
-                  src="/icons/notebook.svg" 
-                  alt="学習"
-                  className="w-3.5 h-3.5"
-                />
-              </div>
-              <span>学習を行った日</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="w-6 h-6 border-2 border-purple-500 rounded-full flex items-center justify-center bg-transparent">
-                <img 
-                  src="/icons/scale.svg" 
-                  alt="体重・体脂肪率"
-                  className="w-3.5 h-3.5"
-                />
-              </div>
-              <span>体重・体脂肪率を記録した日</span>
-            </div>
-          </div>
-          <div className="mt-3 p-3 bg-blue-50 rounded-lg">
-            <h4 className="text-sm font-medium text-blue-900 mb-2">表示レイアウト:</h4>
-            <div className="space-y-1 text-xs text-blue-800">
-              <p><strong>表示順序:</strong> トレーニング → 体重・体脂肪率 → 学習</p>
-              <p><strong>1段目:</strong> トレーニングアイコン（有酸素・筋力トレーニング）</p>
-              <p><strong>2段目:</strong> 体重・体脂肪率データ（記録がある場合）</p>
-              <p><strong>3段目:</strong> 学習データ（記録がある場合）</p>
-              <p><strong>配置:</strong> 各段の左端が統一され、左マージン30pxで整列</p>
-              <p><strong>スタイル:</strong> アイコンは透明背景で色付きの円枠で囲まれています</p>
-              <p><strong>注意:</strong> 各データは記録がある場合のみ表示されます</p>
-            </div>
-          </div>
-        </div>
-        <p className="text-xs text-gray-500 mt-3">
-          日付をクリックすると、その日の詳細記録を編集できます。
-        </p>
       </div>
 
       <style>{`
@@ -266,14 +203,23 @@ export const CalendarView: React.FC = () => {
         }
         
         .calendar-container .react-calendar__tile {
-          height: 110px;
+          height: 80px;
           display: flex;
           flex-direction: column;
           align-items: flex-start;
           justify-content: flex-start;
-          padding: 6px 4px 4px 4px;
+          padding: 4px 2px 2px 2px;
           border: 1px solid #e5e7eb;
           position: relative;
+          font-size: 12px;
+        }
+        
+        @media (min-width: 640px) {
+          .calendar-container .react-calendar__tile {
+            height: 110px;
+            padding: 6px 4px 4px 4px;
+            font-size: 14px;
+          }
         }
         
         .calendar-container .react-calendar__tile--now {
@@ -293,17 +239,31 @@ export const CalendarView: React.FC = () => {
         
         .calendar-container .react-calendar__navigation {
           display: flex;
-          height: 44px;
-          margin-bottom: 1rem;
+          height: 36px;
+          margin-bottom: 0.5rem;
+        }
+        
+        @media (min-width: 640px) {
+          .calendar-container .react-calendar__navigation {
+            height: 44px;
+            margin-bottom: 1rem;
+          }
         }
         
         .calendar-container .react-calendar__navigation button {
-          min-width: 44px;
+          min-width: 36px;
           background: none;
           border: none;
           color: #374151;
-          font-size: 16px;
+          font-size: 14px;
           font-weight: 500;
+        }
+        
+        @media (min-width: 640px) {
+          .calendar-container .react-calendar__navigation button {
+            min-width: 44px;
+            font-size: 16px;
+          }
         }
         
         .calendar-container .react-calendar__navigation button:hover {
@@ -314,12 +274,53 @@ export const CalendarView: React.FC = () => {
           text-align: center;
           text-transform: uppercase;
           font-weight: 500;
-          font-size: 12px;
+          font-size: 10px;
           color: #6b7280;
         }
         
+        @media (min-width: 640px) {
+          .calendar-container .react-calendar__month-view__weekdays {
+            font-size: 12px;
+          }
+        }
+        
         .calendar-container .react-calendar__month-view__weekdays__weekday {
-          padding: 0.5rem 0;
+          padding: 0.25rem 0;
+        }
+        
+        @media (min-width: 640px) {
+          .calendar-container .react-calendar__month-view__weekdays__weekday {
+            padding: 0.5rem 0;
+          }
+        }
+        
+        /* スマホでのアイコンサイズ調整 */
+        @media (max-width: 639px) {
+          .calendar-container .react-calendar__tile div[style*="paddingLeft: 30px"] {
+            padding-left: 15px !important;
+          }
+          
+          .calendar-container .react-calendar__tile .w-5 {
+            width: 16px !important;
+            height: 16px !important;
+          }
+          
+          .calendar-container .react-calendar__tile .w-3 {
+            width: 10px !important;
+            height: 10px !important;
+          }
+          
+          .calendar-container .react-calendar__tile .text-xs {
+            font-size: 9px !important;
+          }
+          
+          .calendar-container .react-calendar__tile .gap-1 {
+            gap: 2px !important;
+          }
+          
+          .calendar-container .react-calendar__tile .h-5 {
+            height: 16px !important;
+          }
         }
       `}</style>
     </div>
