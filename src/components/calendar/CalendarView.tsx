@@ -44,7 +44,7 @@ export const CalendarView: React.FC = () => {
     const hasTrainingData = hasRunning || hasStrength;
 
     return (
-      <div className="mt-1 w-full h-full flex flex-col justify-start gap-0.5 sm:gap-1 pl-0">
+      <div className="mt-1 w-full h-full flex flex-col justify-start gap-0.5 sm:gap-1 pl-2 sm:pl-25">
         {/* 1段目: トレーニングアイコン（データがある場合のみ） */}
         {hasTrainingData && (
           <div className="flex justify-start items-center gap-0.5 sm:gap-1 h-3 sm:h-5">
@@ -145,11 +145,10 @@ export const CalendarView: React.FC = () => {
     <div className="bg-white rounded-lg shadow-md p-3 sm:p-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 gap-3 sm:gap-4">
         <h2 className="text-base sm:text-xl font-semibold text-gray-900 leading-tight">
-          <span className="block sm:inline">トレーニング・学習・</span>
-          <span className="block sm:inline">体重記録</span>
+          トレーニング・学習・体重記録
         </h2>
         <div className="flex items-center gap-2 sm:gap-4">
-          <div className="grid grid-cols-2 sm:flex sm:items-center gap-1.5 sm:gap-4 text-xs sm:text-sm text-gray-600">
+          <div className="flex items-center gap-1.5 sm:gap-4 text-xs sm:text-sm text-gray-600">
             <div className="flex items-center gap-1 sm:gap-2">
               <div className="w-3 h-3 sm:w-6 sm:h-6 border border-blue-500 sm:border-2 rounded-full flex items-center justify-center bg-transparent">
                 <img 
