@@ -265,7 +265,7 @@ export const DailyModal: React.FC = () => {
         />
         
         {/* モーダルコンテナ - スマホでは画面全体、デスクトップでは通常サイズ */}
-        <div className="relative w-full h-full sm:h-auto sm:max-w-2xl sm:max-h-[90vh] transform overflow-hidden bg-white text-left shadow-xl transition-all sm:rounded-lg">
+        <div className="relative w-90％ h-90％ sm:h-auto sm:max-w-2xl sm:max-h-[90vh] transform overflow-hidden bg-white text-left shadow-xl transition-all sm:rounded-lg">
           {/* ヘッダー */}
           <div className="sticky top-0 z-10 bg-white border-b border-gray-200 px-4 py-3 sm:px-6 sm:py-4">
             <div className="flex items-center justify-between">
