@@ -44,7 +44,7 @@ export const CalendarView: React.FC = () => {
     const hasTrainingData = hasRunning || hasStrength;
 
     return (
-      <div className="mt-1 w-full h-full flex flex-col justify-start gap-0.5 sm:gap-1 pl-2 sm:pl-25">
+      <div className="mt-1 w-full h-full flex flex-col justify-start gap-0.5 sm:gap-1 pl-2 sm:pl-30">
         {/* 1段目: トレーニングアイコン（データがある場合のみ） */}
         {hasTrainingData && (
           <div className="flex justify-start items-center gap-0.5 sm:gap-1 h-3 sm:h-5">
@@ -142,8 +142,8 @@ export const CalendarView: React.FC = () => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-3 sm:p-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 gap-3 sm:gap-4">
+    <div className="bg-white rounded-lg shadow-md p-3 sm:p-6 h-full flex flex-col">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 gap-3 sm:gap-4 flex-shrink-0">
         <h2 className="text-base sm:text-xl font-semibold text-gray-900 leading-tight">
           トレーニング・学習・体重記録
         </h2>
@@ -193,7 +193,7 @@ export const CalendarView: React.FC = () => {
         </div>
       </div>
 
-      <div className="calendar-container">
+      <div className="calendar-container flex-1 min-h-0">
         <Calendar
           value={value}
           onChange={(newValue) => {
@@ -205,7 +205,7 @@ export const CalendarView: React.FC = () => {
           onClickDay={handleDateClick}
           tileContent={getTileContent}
           tileClassName={getTileClassName}
-          className="w-full border-none"
+          className="w-full border-none h-full"
           prevLabel={<ChevronLeft className="h-3 w-3 sm:h-4 sm:w-4" />}
           nextLabel={<ChevronRight className="h-3 w-3 sm:h-4 sm:w-4" />}
         />
@@ -214,12 +214,36 @@ export const CalendarView: React.FC = () => {
       <style>{`
         .calendar-container .react-calendar {
           width: 100%;
+          height: 100%;
           border: none;
           font-family: inherit;
+          display: flex;
+          flex-direction: column;
+        }
+        
+        .calendar-container .react-calendar__viewContainer {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+        }
+        
+        .calendar-container .react-calendar__month-view {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+        }
+        
+        .calendar-container .react-calendar__month-view__days {
+          flex: 1;
+          display: grid !important;
+          grid-template-columns: repeat(7, 1fr);
+          grid-template-rows: repeat(6, 1fr);
+          gap: 1px;
         }
         
         .calendar-container .react-calendar__tile {
-          height: 70px;
+          height: auto !important;
+          min-height: 60px;
           display: flex;
           flex-direction: column;
           align-items: flex-start;
@@ -233,9 +257,15 @@ export const CalendarView: React.FC = () => {
         
         @media (min-width: 640px) {
           .calendar-container .react-calendar__tile {
-            height: 110px;
+            min-height: 90px;
             padding: 6px 4px 4px 4px;
             font-size: 14px;
+          }
+        }
+        
+        @media (max-height: 700px) and (max-width: 639px) {
+          .calendar-container .react-calendar__tile {
+            min-height: 50px;
           }
         }
         
@@ -258,6 +288,7 @@ export const CalendarView: React.FC = () => {
           display: flex;
           height: 32px;
           margin-bottom: 0.5rem;
+          flex-shrink: 0;
         }
         
         @media (min-width: 640px) {
@@ -293,6 +324,7 @@ export const CalendarView: React.FC = () => {
           font-weight: 500;
           font-size: 9px;
           color: #6b7280;
+          flex-shrink: 0;
         }
         
         @media (min-width: 640px) {
