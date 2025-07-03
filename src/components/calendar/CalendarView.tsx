@@ -44,7 +44,7 @@ export const CalendarView: React.FC = () => {
     const hasTrainingData = hasRunning || hasStrength;
 
     return (
-      <div className="mt-1 w-full h-full flex flex-col justify-start gap-0.5 sm:gap-1 pl-2 sm:pl-25">
+      <div className="record-icons-container">
         {/* 1段目: トレーニングアイコン（データがある場合のみ） */}
         {hasTrainingData && (
           <div className="flex justify-start items-center gap-0.5 sm:gap-1 h-3 sm:h-5">
@@ -142,7 +142,7 @@ export const CalendarView: React.FC = () => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-3 sm:p-6">
+    <div className="calendar-responsive-container">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 gap-3 sm:gap-4">
         <h2 className="text-base sm:text-xl font-semibold text-gray-900 leading-tight">
           トレーニング・学習・体重記録
@@ -212,6 +212,89 @@ export const CalendarView: React.FC = () => {
       </div>
 
       <style>{`
+        /* Mobile-first responsive calendar container */
+        .calendar-responsive-container {
+          background: white;
+          border-radius: 0.5rem;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+          padding: 0.75rem;
+        }
+
+        /* Mobile screens (max-width: 767px) */
+        @media (max-width: 767px) {
+          .calendar-responsive-container {
+            height: 100vh;
+            width: 100vw;
+            max-width: 430px; /* iPhone 16 Pro width */
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            border-radius: 0;
+            box-shadow: none;
+            padding: 1rem;
+          }
+
+          .calendar-container {
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+          }
+
+          .calendar-container .react-calendar {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+          }
+
+          .calendar-container .react-calendar__viewContainer {
+            flex: 1;
+            min-height: 0;
+          }
+
+          .calendar-container .react-calendar__month-view {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+          }
+
+          .calendar-container .react-calendar__month-view__days {
+            flex: 1;
+            min-height: 0;
+          }
+
+          /* Record icons positioning for mobile */
+          .record-icons-container {
+            margin-top: 0.25rem;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            gap: 0.125rem;
+            padding-left: 0.5rem; /* 2px equivalent */
+          }
+        }
+
+        /* Tablet/Desktop screens (min-width: 768px) */
+        @media (min-width: 768px) {
+          .calendar-responsive-container {
+            padding: 1.5rem;
+          }
+
+          /* Record icons positioning for desktop */
+          .record-icons-container {
+            margin-top: 0.25rem;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            gap: 0.25rem;
+            padding-left: 1.875rem; /* 30px equivalent */
+          }
+        }
+
+        /* Base calendar styles */
         .calendar-container .react-calendar {
           width: 100%;
           border: none;
@@ -311,13 +394,13 @@ export const CalendarView: React.FC = () => {
           }
         }
         
-        /* スマホでの詳細調整 */
+        /* Mobile-specific optimizations */
         @media (max-width: 639px) {
           .calendar-container .react-calendar__tile {
             overflow: hidden;
           }
           
-          /* 日付番号のサイズ調整 */
+          /* Date number size adjustment */
           .calendar-container .react-calendar__tile abbr {
             font-size: 9px;
             font-weight: 500;
