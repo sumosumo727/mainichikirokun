@@ -472,7 +472,7 @@ export const DailyModal: React.FC = () => {
           </div>
 
           {/* フッター（固定） */}
-          <div className="sticky bottom-20 bg-white border-t border-gray-200 px-4 py-3 sm:px-6 sm:py-4">
+          <div className="sticky bottom-10 bg-white border-t border-gray-200 px-4 py-3 sm:px-6 sm:py-4">
             <div className="flex justify-end gap-2 sm:gap-3">
               <Button
                 variant="outline"
