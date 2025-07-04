@@ -258,7 +258,7 @@ export const DailyModal: React.FC = () => {
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden">
-      <div className="flex min-h-screen items-center justify-center p-2 sm:p-4">
+      <div className="flex min-h-screen items-start justify-center p-2 sm:p-4 pt-8 sm:pt-16">
         <div 
           className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
           onClick={handleModalClose}
