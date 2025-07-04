@@ -300,7 +300,8 @@ export const DailyModal: React.FC = () => {
                   </div>
                   トレーニング
                 </h4>
-                <div className="space-y-2 sm:space-y-3">
+                {/* スマホでは横並び、デスクトップでは縦並び */}
+                <div className="grid grid-cols-2 sm:grid-cols-1 gap-2 sm:gap-3">
                   <label className="flex items-center gap-2 sm:gap-3 cursor-pointer p-2 sm:p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
                     <input
                       type="checkbox"
@@ -335,7 +336,7 @@ export const DailyModal: React.FC = () => {
                           className="w-2 h-2 sm:w-3 sm:h-3"
                         />
                       </div>
-                      <span className="text-xs sm:text-sm font-medium">筋力トレーニング</span>
+                      <span className="text-xs sm:text-sm font-medium">筋トレ</span>
                     </div>
                   </label>
                 </div>
@@ -353,7 +354,8 @@ export const DailyModal: React.FC = () => {
                   </div>
                   体重・体脂肪率
                 </h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
+                {/* スマホでは横並び、デスクトップでも横並び */}
+                <div className="grid grid-cols-2 gap-2 sm:gap-4">
                   <div className="space-y-1">
                     <label className="block text-xs sm:text-sm font-medium text-gray-700">
                       体重 (kg)
