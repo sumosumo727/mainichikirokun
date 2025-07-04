@@ -312,7 +312,7 @@ export const DailyModal: React.FC = () => {
                     <div className="flex items-center gap-1 sm:gap-2">
                       <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-blue-500 rounded-full flex items-center justify-center bg-transparent">
                         <img 
-                          src="/icons/bicycle.svg" 
+                          src={window.innerWidth < 640 ? "/icons/bycycle_smartphone.svg" : "/icons/bicycle.svg"}
                           alt="有酸素"
                           className="w-2 h-2 sm:w-3 sm:h-3"
                         />
@@ -331,7 +331,7 @@ export const DailyModal: React.FC = () => {
                     <div className="flex items-center gap-1 sm:gap-2">
                       <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-green-500 rounded-full flex items-center justify-center bg-transparent">
                         <img 
-                          src="/icons/dumbbell.svg" 
+                          src={window.innerWidth < 640 ? "/icons/dumbel_smartphone.svg" : "/icons/dumbbell.svg"}
                           alt="筋力トレーニング"
                           className="w-2 h-2 sm:w-3 sm:h-3"
                         />
@@ -347,7 +347,7 @@ export const DailyModal: React.FC = () => {
                 <h4 className="text-sm sm:text-lg font-medium text-gray-900 mb-2 sm:mb-3 flex items-center gap-2">
                   <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-purple-500 rounded-full flex items-center justify-center bg-transparent">
                     <img 
-                      src="/icons/scale.svg" 
+                      src={window.innerWidth < 640 ? "/icons/scale_smartphone.svg" : "/icons/scale.svg"}
                       alt="体重・体脂肪率"
                       className="w-2 h-2 sm:w-3 sm:h-3"
                     />
@@ -391,7 +391,7 @@ export const DailyModal: React.FC = () => {
                 <h4 className="text-sm sm:text-lg font-medium text-gray-900 mb-2 sm:mb-3 flex items-center gap-2">
                   <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-amber-500 rounded-full flex items-center justify-center bg-transparent">
                     <img 
-                      src="/icons/notebook.svg" 
+                      src={window.innerWidth < 640 ? "/icons/notebook_smartphone.svg" : "/icons/notebook.svg"}
                       alt="学習"
                       className="w-2 h-2 sm:w-3 sm:h-3"
                     />
@@ -403,7 +403,7 @@ export const DailyModal: React.FC = () => {
                   <div className="text-center py-3 sm:py-8 text-gray-500">
                     <div className="w-6 h-6 sm:w-12 sm:h-12 border-2 border-amber-500 rounded-full flex items-center justify-center bg-transparent mx-auto mb-2">
                       <img 
-                        src="/icons/notebook.svg" 
+                        src={window.innerWidth < 640 ? "/icons/notebook_smartphone.svg" : "/icons/notebook.svg"}
                         alt="学習"
                         className="w-3 h-3 sm:w-6 sm:h-6 opacity-30"
                       />

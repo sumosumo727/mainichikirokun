@@ -52,7 +52,7 @@ export const CalendarView: React.FC = () => {
               {hasStrength && (
                 <div className="w-4 h-4 sm:w-5 sm:h-5 border border-green-500 sm:border-2 rounded-full flex items-center justify-center bg-transparent">
                   <img 
-                    src="/icons/dumbbell.svg" 
+                    src={window.innerWidth < 640 ? "/icons/dumbel_smartphone.svg" : "/icons/dumbbell.svg"}
                     alt="筋力トレーニング"
                     className="w-2 h-2 sm:w-3 sm:h-3"
                     title="筋力トレーニング"
@@ -62,7 +62,7 @@ export const CalendarView: React.FC = () => {
               {hasRunning && (
                 <div className="w-4 h-4 sm:w-5 sm:h-5 border border-blue-500 sm:border-2 rounded-full flex items-center justify-center bg-transparent">
                   <img 
-                    src="/icons/bicycle.svg" 
+                    src={window.innerWidth < 640 ? "/icons/bycycle_smartphone.svg" : "/icons/bicycle.svg"}
                     alt="有酸素"
                     className="w-2 h-2 sm:w-3 sm:h-3"
                     title="有酸素"
@@ -78,7 +78,7 @@ export const CalendarView: React.FC = () => {
               <div className="flex items-start gap-1 sm:gap-1">
                 <div className="w-4 h-4 sm:w-5 sm:h-5 border border-purple-500 sm:border-2 rounded-full flex items-center justify-center bg-transparent flex-shrink-0">
                   <img 
-                    src="/icons/scale.svg" 
+                    src={window.innerWidth < 640 ? "/icons/scale_smartphone.svg" : "/icons/scale.svg"}
                     alt="体重・体脂肪率"
                     className="w-2 h-2 sm:w-3 sm:h-3"
                     title="体重・体脂肪率"
@@ -114,7 +114,7 @@ export const CalendarView: React.FC = () => {
               <div className="flex items-center gap-1 sm:gap-1">
                 <div className="w-4 h-4 sm:w-5 sm:h-5 border border-amber-500 sm:border-2 rounded-full flex items-center justify-center bg-transparent">
                   <img 
-                    src="/icons/notebook.svg" 
+                    src={window.innerWidth < 640 ? "/icons/notebook_smartphone.svg" : "/icons/notebook.svg"}
                     alt="学習"
                     className="w-2 h-2 sm:w-3 sm:h-3"
                     title="学習"
@@ -154,7 +154,7 @@ export const CalendarView: React.FC = () => {
             <div className="flex items-center gap-1 sm:gap-2">
               <div className="w-3 h-3 sm:w-6 sm:h-6 border border-blue-500 sm:border-2 rounded-full flex items-center justify-center bg-transparent">
                 <img 
-                  src="/icons/bicycle.svg" 
+                  src={window.innerWidth < 640 ? "/icons/bycycle_smartphone.svg" : "/icons/bicycle.svg"}
                   alt="有酸素"
                   className="w-1.5 h-1.5 sm:w-3.5 sm:h-3.5"
                 />
@@ -164,7 +164,7 @@ export const CalendarView: React.FC = () => {
             <div className="flex items-center gap-1 sm:gap-2">
               <div className="w-3 h-3 sm:w-6 sm:h-6 border border-green-500 sm:border-2 rounded-full flex items-center justify-center bg-transparent">
                 <img 
-                  src="/icons/dumbbell.svg" 
+                  src={window.innerWidth < 640 ? "/icons/dumbel_smartphone.svg" : "/icons/dumbbell.svg"}
                   alt="筋力トレーニング"
                   className="w-1.5 h-1.5 sm:w-3.5 sm:h-3.5"
                 />
@@ -174,7 +174,7 @@ export const CalendarView: React.FC = () => {
             <div className="flex items-center gap-1 sm:gap-2">
               <div className="w-3 h-3 sm:w-6 sm:h-6 border border-amber-500 sm:border-2 rounded-full flex items-center justify-center bg-transparent">
                 <img 
-                  src="/icons/notebook.svg" 
+                  src={window.innerWidth < 640 ? "/icons/notebook_smartphone.svg" : "/icons/notebook.svg"}
                   alt="学習"
                   className="w-1.5 h-1.5 sm:w-3.5 sm:h-3.5"
                 />
@@ -184,7 +184,7 @@ export const CalendarView: React.FC = () => {
             <div className="flex items-center gap-1 sm:gap-2">
               <div className="w-3 h-3 sm:w-6 sm:h-6 border border-purple-500 sm:border-2 rounded-full flex items-center justify-center bg-transparent">
                 <img 
-                  src="/icons/scale.svg" 
+                  src={window.innerWidth < 640 ? "/icons/scale_smartphone.svg" : "/icons/scale.svg"}
                   alt="体重・体脂肪率"
                   className="w-1.5 h-1.5 sm:w-3.5 sm:h-3.5"
                 />
